@@ -1,0 +1,54 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.stack-sm {
+  display: grid;
+  gap: 8px;
+}
+
+.stack-md {
+  display: grid;
+  gap: 16px;
+}
+
+.stack-lg {
+  display: grid;
+  gap: 28px;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .contact-fab,
+  .skip-link,
+  .menu-toggle,
+  .mobile-menu {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  main {
+    overflow: visible;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Ruta del sitemap: /sitemap.xml
+# PENDIENTE: definir SITE_URL para publicar una directiva Sitemap absoluta.

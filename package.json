@@ -1,0 +1,28 @@
+{
+  "name": "almate-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sitio institucional y comercial de ALMATE · Soluciones digitales.",
+  "scripts": {
+    "generate": "node scripts/generate-pages.mjs",
+    "predev": "npm run generate",
+    "dev": "vite",
+    "prebuild": "npm run generate",
+    "build": "vite build",
+    "preview": "vite preview",
+    "verify": "node scripts/verify.mjs",
+    "check:responsive": "node scripts/check-responsive.mjs",
+    "image:og": "node scripts/generate-social.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
