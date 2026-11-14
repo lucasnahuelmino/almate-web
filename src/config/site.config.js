@@ -1,5 +1,5 @@
 /**
- * Configuración central de ALMATE.
+ * Configuración central de ALMATE · Digital Studio.
  * ---------------------------------------------------------------
  * Todo dato comercial, de contacto y de marca vive acá.
  * Los valores vacíos están marcados como PENDIENTES a propósito:
@@ -13,13 +13,13 @@ const envSiteUrl =
 
 export const site = {
   name: 'ALMATE',
-  legalName: 'ALMATE · Soluciones digitales',
-  descriptor: 'Soluciones digitales',
-  tagline: 'Transformamos ideas en soluciones digitales.',
+  legalName: 'ALMATE · Digital Studio',
+  descriptor: 'Digital Studio',
+  tagline: 'Ideas que evolucionan. Soluciones que transforman.',
   description:
-    'Diseñamos y desarrollamos herramientas digitales para que comercios, profesionales y empresas trabajen mejor, crezcan y evolucionen.',
+    'Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.',
   valueProposition:
-    'Diseñamos y desarrollamos herramientas digitales para que comercios, profesionales y empresas trabajen mejor, crezcan y evolucionen.',
+    'Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.',
 
   /* PENDIENTE: definir el dominio oficial. Mientras esté vacío, canonical,
      Open Graph y sitemap usan rutas relativas y no se publica una URL falsa. */
@@ -27,16 +27,17 @@ export const site = {
   locale: 'es_AR',
   language: 'es-AR',
 
-  /* PENDIENTE: reemplazar null por la ruta del logotipo oficial cuando exista.
-     Mientras tanto se usa el logotipo tipográfico provisorio de components/Logo.js. */
-  logo: null,
-  logoWidth: 144,
-  logoHeight: 32,
-  logoAlt: 'ALMATE · Soluciones digitales',
-  favicon: '/favicon.svg',
+  /* Identidad visual oficial. Los PNG son transparentes con arte negro:
+     se aplican siempre sobre superficies claras, sin filtros ni variantes. */
+  logo: '/logo_almate.png',
+  logoMark: '/logo_a_almate.png',
+  logoWidth: 620,
+  logoHeight: 165,
+  logoAlt: 'ALMATE · Digital Studio',
+  favicon: '/favicon-32.png',
   appleTouchIcon: '/apple-touch-icon.png',
   ogImage: '/og-image.png',
-  themeColor: '#0B1220',
+  themeColor: '#1A1A1A',
 
   /* PENDIENTE: completar con el correo comercial real. */
   email: '',
@@ -54,24 +55,24 @@ export const site = {
   contact: {
     note: 'No hay un servidor recibiendo el formulario en esta etapa. La consulta se prepara y se envía por WhatsApp o por el cliente de correo del visitante.',
     pendingNote:
-      'El canal de contacto todavía no está configurado. Completá el correo o el WhatsApp en src/config/site.config.js antes de publicar el sitio.',
+      'El canal de contacto directo todavía no está habilitado. Podés preparar tu consulta y copiarla; no se envió ningún mensaje.',
     responseNote: 'Respondemos por el mismo canal que elijas para la consulta.',
     consent:
       'Acepto que ALMATE utilice estos datos únicamente para responder mi consulta.',
   },
 
   seo: {
-    defaultTitle: 'ALMATE · Soluciones digitales',
+    defaultTitle: 'ALMATE · Digital Studio',
     titleTemplate: '%s | ALMATE',
     defaultDescription:
-      'Desarrollamos sitios web, sistemas de gestión y herramientas digitales para comercios, profesionales y empresas.',
+      'Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.',
     twitterHandle: '',
-    ogImageAlt: 'ALMATE · Soluciones digitales. Transformamos ideas en soluciones digitales.',
+    ogImageAlt: 'ALMATE · Digital Studio. Ideas que evolucionan. Soluciones que transforman.',
   },
 
   institutional: {
     credit: 'Desarrollado por ALMATE · Soluciones digitales.',
-    status: 'Ecosistema en evolución',
+    status: 'Digital Studio · Ecosistema en evolución',
     workingModel: 'Trabajo directo, sin capas innecesarias.',
     principles: [
       'Claridad antes que complejidad.',
@@ -83,14 +84,14 @@ export const site = {
   },
 
   colors: {
-    background: '#0B1220',
-    backgroundAlt: '#101C30',
-    surface: '#14233A',
-    primary: '#1677FF',
-    cyan: '#35C8E8',
-    text: '#F4F7FB',
-    textMuted: '#A5B2C5',
-    border: '#263750',
+    background: '#1A1A1A',
+    backgroundAlt: '#292929',
+    surface: '#292929',
+    primary: '#0878E8',
+    accent: '#0878E8',
+    text: '#FFFFFF',
+    textMuted: '#A0A0A0',
+    border: 'rgba(255, 255, 255, 0.12)',
   },
 
   navigation: [

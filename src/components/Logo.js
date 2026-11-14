@@ -5,8 +5,9 @@ import { escapeAttr } from '../lib/html.js';
 export function Logo({ variant = 'header' } = {}) {
   const href = route('/');
   if (site.logo) {
+    const loading = variant === 'header' ? ' fetchpriority="high"' : ' loading="lazy"';
     return `<a class="brand brand--${variant}" href="${href}" aria-label="${escapeAttr(site.logoAlt)} — Inicio">
-      <img class="brand__image" src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" decoding="async">
+      <img class="brand__image" src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" decoding="async"${loading}>
     </a>`;
   }
 

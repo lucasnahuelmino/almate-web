@@ -1,57 +1,173 @@
+/* ==========================================================================
+   ALMATE · Digital Studio — Design tokens
+   Única fuente de verdad de color, tipografía, espaciado y movimiento.
+   El resto de los CSS usa exclusivamente estas variables.
+   ========================================================================== */
+
 :root {
-  /* Paleta centralizada */
-  --color-bg: #0b1220;
-  --color-bg-alt: #101c30;
-  --color-surface: #14233a;
-  --color-surface-2: #182b46;
-  --color-surface-3: #1d3353;
-  --color-primary: #1677ff;
-  --color-cyan: #35c8e8;
-  --color-text: #f4f7fb;
-  --color-muted: #a5b2c5;
-  --color-muted-2: #7e8ea5;
-  --color-border: #263750;
-  --color-border-soft: rgba(38, 55, 80, 0.62);
-  --color-success: #4ade9a;
-  --color-warning: #f6c453;
-  --color-danger: #ff7d8d;
-  --color-violet: #a78bfa;
-  --color-amber: #f4a261;
-  --color-rose: #f472b6;
+  /* ---------- Paleta oficial ---------- */
+  --almate-carbon: #1A1A1A; /* fondo principal */
+  --almate-soft: #292929; /* fondo secundario / tarjetas oscuras */
+  --almate-graphite: #4D4D4D; /* texto secundario sobre claro */
+  --almate-mist: #F2F2F2; /* secciones claras */
+  --almate-white: #FFFFFF;
+  --almate-blue: #0878E8; /* acento eléctrico */
 
-  /* Fondos derivados */
-  --gradient-brand: linear-gradient(135deg, var(--color-cyan), var(--color-primary) 62%);
-  --gradient-brand-soft: linear-gradient(135deg, rgba(53, 200, 232, 0.18), rgba(22, 119, 255, 0.18));
-  --gradient-panel: linear-gradient(180deg, rgba(20, 35, 58, 0.92), rgba(16, 28, 48, 0.72));
-  --gradient-panel-hover: linear-gradient(180deg, rgba(24, 43, 70, 0.96), rgba(16, 28, 48, 0.82));
-  --gradient-text: linear-gradient(100deg, #f4f7fb 0%, #9fd8ff 36%, #35c8e8 66%, #1677ff 100%);
+  /* Derivados de apoyo (accesibilidad y estados) */
+  --almate-muted-dark: #A0A0A0;
+  --almate-blue-on-dark: #4DA3FF; /* texto/enlace azul sobre carbón */
+  --almate-blue-on-light: #0668C4; /* texto/enlace azul sobre niebla */
+  --almate-blue-hover: #0A66C2;
+  /* Botón primario: variante del azul que alcanza AA con texto blanco. */
+  --almate-blue-action: #0A66C2;
+  --almate-blue-action-hover: #0859A8;
 
-  /* Tipografía */
-  --font-heading: 'Manrope Variable', 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  /* ---------- Roles semánticos (tema oscuro por defecto) ---------- */
+  --bg: var(--almate-carbon);
+  --bg-alt: #202020;
+  --surface: var(--almate-soft);
+  --text: var(--almate-white);
+  --text-muted: var(--almate-muted-dark);
+  --accent: var(--almate-blue);
+  --link: var(--almate-blue-on-dark);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.26);
+  --focus-ring: var(--almate-blue-on-dark);
+
+  /* ---------- Alias legacy (compatibilidad del sistema existente) ---------- */
+  --color-bg: var(--almate-carbon);
+  --color-bg-alt: var(--bg-alt);
+  --color-surface: var(--almate-soft);
+  --color-surface-2: #303030;
+  --color-surface-3: #383838;
+  --color-primary: var(--almate-blue);
+  --color-cyan: var(--almate-blue-on-dark);
+  --color-text: var(--almate-white);
+  --color-muted: var(--almate-muted-dark);
+  --color-muted-2: #8C8C8C;
+  --color-border: var(--border);
+  --color-border-soft: rgba(255, 255, 255, 0.07);
+  --color-success: var(--almate-blue-on-dark);
+  --color-warning: var(--almate-white);
+  --color-danger: #FF9A9A;
+  --color-violet: #B9A8FF;
+  --color-amber: #E8B27A;
+  --color-rose: #F0A0C0;
+
+  /* ---------- Tipografía ---------- */
+  --font-display: 'Manrope Variable', 'Manrope', 'Segoe UI', system-ui, sans-serif;
   --font-body: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: var(--font-display);
   --font-mono: 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
 
-  /* Medidas */
-  --container: 1220px;
-  --container-narrow: 980px;
-  --header-height: 78px;
-  --section-space: clamp(4.75rem, 9vw, 8rem);
+  --fs-h1: clamp(2.6rem, 1.6rem + 4.4vw, 5.4rem);
+  --fs-h2: clamp(1.9rem, 1.3rem + 2.6vw, 3.4rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.65rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.28rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-micro: 0.75rem;
+
+  --lh-tight: 1.02;
+  --lh-heading: 1.12;
+  --lh-body: 1.65;
+
+  --ls-display: -0.035em;
+  --ls-micro: 0.16em;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --measure: 62ch;
+
+  /* ---------- Espaciado (base 4px) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --section-y: clamp(4rem, 3rem + 5vw, 7.5rem);
+  --section-space: var(--section-y);
+  --container: 1200px;
+  --container-narrow: 960px;
+  --gutter: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
   --gap: clamp(1rem, 2vw, 1.5rem);
-  --radius-xs: 8px;
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 26px;
-  --radius-xl: 34px;
+  --header-height: 76px;
+
+  /* ---------- Forma: geometría neta derivada del isotipo ---------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
   --radius-pill: 999px;
 
-  /* Sombras */
-  --shadow-sm: 0 3px 12px rgba(2, 7, 16, 0.28);
-  --shadow-md: 0 16px 50px rgba(2, 7, 16, 0.38);
-  --shadow-lg: 0 28px 90px rgba(2, 7, 16, 0.55);
-  --shadow-glow: 0 0 0 1px rgba(53, 200, 232, 0.16), 0 18px 60px rgba(22, 119, 255, 0.18);
+  --line: 1px solid var(--border);
 
-  /* Movimiento */
+  /* ---------- Sombras (sin brillos de color) ---------- */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 1px rgba(8, 120, 232, 0.35), 0 12px 40px rgba(8, 120, 232, 0.14);
+
+  /* ---------- Gradientes (acento controlado, nunca protagonista) ---------- */
+  --gradient-brand: linear-gradient(135deg, var(--almate-blue-on-dark), var(--almate-blue));
+  --gradient-brand-soft: linear-gradient(135deg, rgba(8, 120, 232, 0.18), rgba(8, 120, 232, 0.04));
+  --gradient-panel: linear-gradient(180deg, #292929, #202020);
+  --gradient-panel-hover: linear-gradient(180deg, #303030, #232323);
+  --gradient-text: linear-gradient(100deg, #FFFFFF 0%, #FFFFFF 55%, #4DA3FF 100%);
+
+  /* ---------- Movimiento ---------- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --transition: 220ms var(--ease-out);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --transition: 200ms var(--ease-out);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+
+  /* ---------- Capas ---------- */
+  --z-header: 100;
+  --z-menu: 110;
+  --z-assistant: 120;
+  --z-modal: 200;
+}
+
+/* ---------- Secciones claras: reasignan solo los roles ---------- */
+.theme-light {
+  --bg: var(--almate-mist);
+  --bg-alt: var(--almate-white);
+  --surface: var(--almate-white);
+  --text: var(--almate-carbon);
+  --text-muted: var(--almate-graphite);
+  --link: var(--almate-blue-on-light);
+  --accent: var(--almate-blue-on-light);
+  --border: rgba(26, 26, 26, 0.16);
+  --border-strong: rgba(26, 26, 26, 0.32);
+  --focus-ring: var(--almate-blue-on-light);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.theme-dark {
+  --bg: var(--almate-carbon);
+  --text: var(--almate-white);
+  background: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --transition: 0ms;
+  }
 }

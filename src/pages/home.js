@@ -6,14 +6,12 @@ import { HeroVisual } from '../components/HeroVisual.js';
 import { ProcessSteps } from '../components/ProcessSteps.js';
 import { ProjectCard } from '../components/ProjectCard.js';
 import { SectionHeading } from '../components/SectionHeading.js';
-import { ServiceCard } from '../components/ServiceCard.js';
 import { StatusBadge } from '../components/StatusBadge.js';
-import { getCategoryById, getFeaturedServices } from '../data/services.js';
 import { getProductStatus, productFamilies } from '../data/products.js';
 import { getFeaturedProjects, getProjectStatus } from '../data/projects.js';
 import { icon } from '../lib/icons.js';
-import { escapeHtml } from '../lib/html.js';
-import { route } from '../lib/paths.js';
+import { escapeAttr, escapeHtml } from '../lib/html.js';
+import { asset, route } from '../lib/paths.js';
 import { organizationSchema, websiteSchema } from '../lib/seo.js';
 
 const capabilities = [
@@ -166,27 +164,30 @@ function NexoSpotlight() {
 }
 
 export function HomePage() {
-  const featuredServices = getFeaturedServices();
   const featuredProjects = getFeaturedProjects();
 
   const body = `
     <section class="home-hero" aria-labelledby="home-title">
       <div class="home-hero__bg" aria-hidden="true">
         <span class="home-hero__grid"></span>
-        <span class="home-hero__glow home-hero__glow--one"></span>
-        <span class="home-hero__glow home-hero__glow--two"></span>
         <span class="home-hero__noise"></span>
       </div>
       <div class="container home-hero__inner">
         <div class="home-hero__content">
-          <p class="hero-kicker"><span class="hero-kicker__dot" aria-hidden="true"></span> ALMATE · Ecosistema digital</p>
-          <h1 class="home-hero__title" id="home-title">Transformamos ideas en <span class="text-gradient">soluciones digitales</span>.</h1>
+          <div class="home-hero__brandline">
+            <span class="home-hero__logo-plate">
+              <img src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" decoding="async" fetchpriority="high">
+            </span>
+            <span class="home-hero__brandtext">Digital Studio</span>
+          </div>
+          <p class="hero-kicker"><span class="hero-kicker__dot" aria-hidden="true"></span> Ideas · Diseño · Tecnología</p>
+          <h1 class="home-hero__title" id="home-title">Ideas que evolucionan. Soluciones que <span class="text-gradient">transforman.</span></h1>
           <p class="home-hero__description">
-            Desarrollamos sitios web, sistemas de gestión y herramientas digitales que ayudan a negocios y profesionales a crecer.
+            Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.
           </p>
           <div class="btn-group home-hero__actions">
-            ${Button({ label: 'Explorá nuestras soluciones', href: route('/soluciones/'), variant: 'primary', size: 'large', iconName: 'arrow-right' })}
-            ${Button({ label: 'Hablemos de tu proyecto', href: route('/contacto/'), variant: 'secondary', size: 'large', iconName: 'arrow-up-right' })}
+            ${Button({ label: 'Explorar soluciones', href: route('/soluciones/'), variant: 'primary', size: 'large', iconName: 'arrow-right' })}
+            ${Button({ label: 'Iniciar un proyecto', href: route('/contacto/'), variant: 'secondary', size: 'large', iconName: 'arrow-up-right' })}
           </div>
           <ul class="hero-facts" aria-label="Cómo trabajamos">
             <li>${icon('check')} Diseño a medida</li>
@@ -208,38 +209,41 @@ export function HomePage() {
       </div>
     </section>
 
-    <section class="section section--capabilities" id="capacidades" aria-labelledby="capabilities-title">
+    <section class="section section--solutions" id="soluciones" aria-labelledby="solutions-title">
       <div class="container">
-        ${SectionHeading({
-          eyebrow: 'Capacidades',
-          index: '01',
-          title: 'Tecnología aplicada a problemas concretos.',
-          intro:
-            'Combinamos diseño, desarrollo y criterio de negocio para construir herramientas que se usan todos los días.',
-          id: 'capabilities-title',
-        })}
+        <div class="section-row">
+          ${SectionHeading({
+            eyebrow: 'Soluciones',
+            index: '01',
+            title: 'Soluciones que resuelven problemas concretos.',
+            intro:
+              'Cada solución parte de un problema real y se construye con el alcance necesario. Diseño, desarrollo y criterio de negocio en la misma conversación.',
+            id: 'solutions-title',
+          })}
+          ${Button({ label: 'Ver todas las soluciones', href: route('/soluciones/'), variant: 'ghost', iconName: 'arrow-right' })}
+        </div>
         <div class="capability-grid">
           ${capabilities.map((capability) => CapabilityCard({ capability })).join('')}
         </div>
       </div>
     </section>
 
-    <section class="section section--solutions" id="soluciones-destacadas" aria-labelledby="solutions-title">
+    <section class="section section--projects" id="proyectos" aria-labelledby="projects-title">
       <div class="container">
         <div class="section-row">
           ${SectionHeading({
-            eyebrow: 'Soluciones',
+            eyebrow: 'Proyectos y demostraciones',
             index: '02',
-            title: 'Herramientas para trabajar mejor.',
+            title: 'Prototipos que muestran el método.',
             intro:
-              'Cada solución parte de un problema concreto y se construye con el alcance necesario, sin complejidad de más.',
-            id: 'solutions-title',
+              'Una selección de sitios y sistemas desarrollados dentro del ecosistema ALMATE. Son demostraciones de trabajo, no casos de clientes reales.',
+            id: 'projects-title',
           })}
-          ${Button({ label: 'Ver todas las soluciones', href: route('/soluciones/'), variant: 'ghost', iconName: 'arrow-right' })}
+          ${Button({ label: 'Ver todos los proyectos', href: route('/proyectos/'), variant: 'ghost', iconName: 'arrow-right' })}
         </div>
-        <div class="service-grid service-grid--featured">
-          ${featuredServices
-            .map((service) => ServiceCard({ service, category: getCategoryById(service.categoryId), variant: 'featured' }))
+        <div class="project-grid project-grid--featured">
+          ${featuredProjects
+            .map((project) => ProjectCard({ project, status: getProjectStatus(project.status) }))
             .join('')}
         </div>
       </div>
@@ -270,34 +274,13 @@ export function HomePage() {
 
     ${NexoSpotlight()}
 
-    <section class="section section--projects" id="proyectos-destacados" aria-labelledby="projects-title">
-      <div class="container">
-        <div class="section-row">
-          ${SectionHeading({
-            eyebrow: 'Proyectos',
-            index: '04',
-            title: 'Prototipos que muestran el método.',
-            intro:
-              'Una selección de sitios y sistemas desarrollados dentro del ecosistema ALMATE. Son demostraciones de trabajo, no casos de clientes reales.',
-            id: 'projects-title',
-          })}
-          ${Button({ label: 'Ver todos los proyectos', href: route('/proyectos/'), variant: 'ghost', iconName: 'arrow-right' })}
-        </div>
-        <div class="project-grid project-grid--featured">
-          ${featuredProjects
-            .map((project) => ProjectCard({ project, status: getProjectStatus(project.status) }))
-            .join('')}
-        </div>
-      </div>
-    </section>
-
     <section class="section section--differentials" id="diferenciales" aria-labelledby="differentials-title">
       <div class="container">
         <div class="differentials-layout">
           <div class="differentials-intro">
             ${SectionHeading({
               eyebrow: 'Diferenciales',
-              index: '05',
+              index: '04',
               title: 'Diseño con intención. Código con criterio.',
               intro:
                 'No buscamos sumar complejidad. Buscamos que cada decisión tenga una razón y que la solución se sienta simple de usar.',
@@ -326,12 +309,12 @@ export function HomePage() {
       </div>
     </section>
 
-    <section class="section section--process" id="proceso" aria-labelledby="process-title">
+    <section class="section section--process" id="metodologia" aria-labelledby="process-title">
       <div class="container">
         <div class="section-row">
           ${SectionHeading({
-            eyebrow: 'Proceso de trabajo',
-            index: '06',
+            eyebrow: 'Metodología',
+            index: '05',
             title: 'Un proceso claro, de la idea a la evolución.',
             intro:
               'Sin plazos genéricos ni pasos ocultos. Cada proyecto define su alcance y su ritmo según el problema a resolver.',
@@ -343,19 +326,44 @@ export function HomePage() {
       </div>
     </section>
 
+    <section class="section section--institutional theme-light" id="institucional" aria-labelledby="institutional-title">
+      <div class="container institutional">
+        <div class="institutional__brand">
+          <span class="institutional__logo-plate">
+            <img src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" loading="lazy" decoding="async">
+          </span>
+          <p class="institutional__signature">ALMATE · Digital Studio</p>
+          <p class="institutional__status">${escapeHtml(site.institutional.status)}</p>
+        </div>
+        <div class="institutional__content">
+          <p class="eyebrow eyebrow--dark"><span class="eyebrow__index">06</span><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Presentación institucional</span></p>
+          <h2 class="institutional__title" id="institutional-title">Un estudio que piensa en el negocio antes que en la tecnología.</h2>
+          <p class="institutional__lead">
+            ALMATE es una marca de soluciones digitales. Diseñamos y desarrollamos sitios web, sistemas de gestión, automatizaciones y productos tecnológicos para comercios, profesionales y empresas que quieren avanzar con una base sólida.
+          </p>
+          <ul class="institutional__principles">
+            ${site.institutional.principles
+              .map((principle) => `<li>${icon('check')}<span>${escapeHtml(principle)}</span></li>`)
+              .join('')}
+          </ul>
+          <a class="institutional__link" href="${route('/nosotros/')}">Conocer ALMATE ${icon('arrow-right')}</a>
+        </div>
+      </div>
+    </section>
+
     ${CTASection({
       eyebrow: 'Próximo paso',
-      title: 'Tu próximo paso digital empieza acá.',
+      title: 'Tu próximo proyecto merece una solución propia.',
       description:
         'Contanos qué necesitás resolver. A partir de eso, pensamos juntos el siguiente paso.',
       primary: {
-        label: 'Hablemos de tu proyecto',
+        label: 'Iniciar un proyecto',
         href: route('/contacto/'),
         variant: 'primary',
         iconName: 'arrow-up-right',
       },
       secondary: {
-        label: 'Explorá las soluciones',
+        label: 'Explorar soluciones',
         href: route('/soluciones/'),
         variant: 'secondary',
         iconName: 'arrow-right',

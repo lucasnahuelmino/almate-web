@@ -1,0 +1,410 @@
+/* ==========================================================================
+   ALMATE · Digital Studio — Sistema social (Instagram)
+   Piezas editables en HTML/CSS. Depende de los tokens oficiales.
+   Formatos: feed 1080×1350 · cuadrado 1080×1080 · historia/reel 1080×1920.
+   ========================================================================== */
+@import url("../src/styles/tokens.css");
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ---------- Formatos (tamaño real en px) ---------- */
+.slide {
+  --pad: 76px;
+  --h1: 108px;
+  --h2: 78px;
+  --lead: 36px;
+  --micro: 23px;
+  --row: 38px;
+  --gap: 32px;
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--gap);
+  width: 1080px;
+  height: 1350px;
+  padding: var(--pad);
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 30px;
+  line-height: 1.45;
+  zoom: var(--zoom, 1);
+}
+
+.fmt-sq {
+  height: 1080px;
+  --h1: 92px;
+  --h2: 66px;
+  --lead: 32px;
+  --gap: 22px;
+  --row: 33px;
+}
+
+.fmt-story {
+  height: 1920px;
+  padding-top: 230px;
+  padding-bottom: 300px; /* zonas seguras de Stories/Reels */
+  --h1: 120px;
+  --h2: 86px;
+  --lead: 39px;
+  --gap: 40px;
+}
+
+/* ---------- Encabezado y pie ---------- */
+.s-head,
+.s-foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logo-plate {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 18px;
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  border-radius: 4px;
+  background: var(--almate-mist);
+}
+
+.logo-plate img {
+  display: block;
+  width: auto;
+  height: 44px;
+  object-fit: contain;
+}
+
+.logo-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 6px;
+  background: var(--almate-mist);
+}
+
+.logo-mark img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.s-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+.s-body.end {
+  justify-content: flex-end;
+}
+
+.s-body.center {
+  justify-content: center;
+}
+
+.s-foot {
+  padding-top: 26px;
+  border-top: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  font-size: var(--micro);
+}
+
+/* ---------- Tipografía ---------- */
+.h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--h1);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.h2 {
+  max-width: 17ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--h2);
+  font-weight: 750;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 28ch;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--lead);
+  line-height: 1.4;
+}
+
+.micro {
+  margin: 0;
+  color: var(--link);
+  font-family: var(--font-body);
+  font-size: var(--micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.copy {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 32px;
+  line-height: 1.45;
+}
+
+/* ---------- Acento azul (un punto de atención por pieza) ---------- */
+.rule {
+  display: block;
+  width: 104px;
+  height: 8px;
+  background: var(--accent);
+}
+
+.chip {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 9px 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--micro);
+  font-weight: 600;
+}
+
+.btn {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 22px 40px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ---------- Listas ---------- */
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rows li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  column-gap: 28px;
+  align-items: start;
+  padding: 24px 0;
+  border-top: 1px solid var(--border-strong);
+}
+
+.rows li:last-child {
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.rows li::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  margin-top: 12px;
+  background: var(--accent);
+}
+
+.rows b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--row);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.rows span {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 27px;
+}
+
+.fmt-sq .rows li {
+  padding: 15px 0;
+}
+
+.fmt-sq .rows span {
+  margin-top: 2px;
+  font-size: 25px;
+}
+
+/* ---------- Marco de captura / mockup ---------- */
+.frame {
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.frame-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.frame-bar i {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+}
+
+.shot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background:
+    repeating-linear-gradient(120deg, transparent 0 28px, var(--border) 28px 29px),
+    var(--surface);
+  color: var(--text-muted);
+  font-size: 26px;
+  text-align: center;
+}
+
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* ---------- Geometría derivada del ángulo del isotipo ---------- */
+.geo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(120deg, transparent 0 59px, var(--border) 59px 60px);
+  -webkit-mask-image: linear-gradient(200deg, #000 0%, transparent 46%);
+  mask-image: linear-gradient(200deg, #000 0%, transparent 46%);
+}
+
+.geo-accent {
+  position: absolute;
+  top: 150px;
+  right: 58px;
+  z-index: 1;
+  width: 3px;
+  height: 460px;
+  background: var(--accent);
+  transform: rotate(-30deg);
+  transform-origin: top;
+  pointer-events: none;
+}
+
+/* ---------- Piezas de producto ---------- */
+.product-list {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px 28px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.product-list strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 700;
+}
+
+.product-list small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 24px;
+}
+
+.badge {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.footer-note {
+  color: var(--text-muted);
+  font-size: 22px;
+}
+
+/* ---------- Vista previa ---------- */
+.sheet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 36px;
+  padding: 36px;
+  background: #0b0b0b;
+  --zoom: 0.36;
+}
+
+body {
+  margin: 0;
+}

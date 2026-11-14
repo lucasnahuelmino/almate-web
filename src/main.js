@@ -1,4 +1,5 @@
 import './styles/main.css';
+import { initAssistant } from './components/assistant/almate-assistant.js';
 import { initHeader } from './ui/header.js';
 import { initReveal } from './ui/reveal.js';
 import { initProjectFilters } from './ui/filters.js';
@@ -9,6 +10,7 @@ function boot() {
   initReveal();
   initProjectFilters();
   initContactForm();
+  initAssistant();
 }
 
 if (document.readyState === 'loading') {

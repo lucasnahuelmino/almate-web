@@ -1,12 +1,18 @@
 /**
- * Genera las imágenes sociales estáticas del sitio usando Chrome/Chromium
- * headless. Si no hay un navegador disponible, avisa y no rompe el build.
+ * Genera imágenes sociales estáticas usando Chrome/Chromium headless.
+ *
+ * - public/og-image.png (1200×630) con el logotipo oficial.
+ * - public/apple-touch-icon.png (180×180) desde el isotipo oficial.
+ * - social/<plantilla>-feed.png (1080×1350) de las cinco plantillas.
+ *
+ * No redibuja ni recolorea los logos: los inserta como imagen sobre una
+ * superficie clara. Si no hay navegador disponible, avisa y no rompe el build.
  *
  * Uso:
  *   npm run image:og
  */
 import { execFile } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -16,13 +22,10 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = join(root, 'public');
+const socialDir = join(root, 'social');
 
-const manrope = pathToFileURL(
-  join(root, 'node_modules', '@fontsource-variable', 'manrope', 'files', 'manrope-latin-wght-normal.woff2'),
-).href;
-const inter = pathToFileURL(
-  join(root, 'node_modules', '@fontsource-variable', 'inter', 'files', 'inter-latin-wght-normal.woff2'),
-).href;
+const LOGO = readFileSync(join(publicDir, 'logo_almate.png')).toString('base64');
+const MARK = readFileSync(join(publicDir, 'logo_a_almate.png')).toString('base64');
 
 function findChrome() {
   const candidates = [
@@ -41,46 +44,21 @@ function findChrome() {
   return candidates.find((candidate) => existsSync(candidate)) || '';
 }
 
-function baseStyles() {
+function fontStyles() {
   return `
     @font-face {
       font-family: 'Manrope';
-      src: url('${manrope}') format('woff2-variations');
+      src: url('${pathToFileURL(join(root, 'node_modules', '@fontsource-variable', 'manrope', 'files', 'manrope-latin-wght-normal.woff2')).href}') format('woff2-variations');
       font-weight: 200 800;
       font-display: block;
     }
     @font-face {
       font-family: 'Inter';
-      src: url('${inter}') format('woff2-variations');
+      src: url('${pathToFileURL(join(root, 'node_modules', '@fontsource-variable', 'inter', 'files', 'inter-latin-wght-normal.woff2')).href}') format('woff2-variations');
       font-weight: 100 900;
       font-display: block;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #0B1220;
-      color: #F4F7FB;
-      font-family: 'Inter', sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
   `;
-}
-
-function mark(size = 44) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
-    <defs>
-      <linearGradient id="markGradient" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#35C8E8"/><stop offset="1" stop-color="#1677FF"/>
-      </linearGradient>
-    </defs>
-    <rect width="64" height="64" rx="16" fill="#14233A"/>
-    <path d="M14 50 32 13l18 37" fill="none" stroke="url(#markGradient)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M23 39h18" fill="none" stroke="#F4F7FB" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="49" cy="15" r="2.5" fill="#35C8E8"/>
-  </svg>`;
 }
 
 function ogHtml() {
@@ -89,149 +67,111 @@ function ogHtml() {
 <head>
 <meta charset="utf-8">
 <style>
-  ${baseStyles()}
-  body { background: #0B1220; }
+  ${fontStyles()}
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #1A1A1A; color: #fff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
   .canvas {
     position: relative;
     width: 1200px;
     height: 630px;
-    padding: 58px 64px 44px;
+    padding: 54px 64px 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background:
-      radial-gradient(760px 460px at 88% 10%, rgba(22, 119, 255, 0.26), transparent 66%),
-      radial-gradient(560px 420px at 4% 104%, rgba(53, 200, 232, 0.15), transparent 62%),
-      linear-gradient(135deg, #0B1220 0%, #101C30 58%, #0B1220 100%);
     overflow: hidden;
+    background:
+      radial-gradient(760px 460px at 92% 4%, rgba(8, 120, 232, 0.2), transparent 66%),
+      #1A1A1A;
   }
   .grid {
     position: absolute;
     inset: 0;
-    opacity: 0.32;
+    opacity: 0.5;
     background-image:
-      linear-gradient(rgba(165, 178, 197, 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(165, 178, 197, 0.07) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(900px 560px at 50% 46%, #000 20%, transparent 100%);
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(900px 520px at 66% 26%, #000 12%, transparent 82%);
   }
-  .glow {
+  .angle {
     position: absolute;
-    border-radius: 999px;
-    filter: blur(10px);
-    pointer-events: none;
-  }
-  .glow--one {
-    width: 300px; height: 300px; right: -72px; top: 112px;
-    background: radial-gradient(circle, rgba(22, 119, 255, 0.42), transparent 70%);
-  }
-  .glow--two {
-    width: 220px; height: 220px; right: 180px; bottom: -80px;
-    background: radial-gradient(circle, rgba(53, 200, 232, 0.28), transparent 70%);
+    top: 70px;
+    right: 96px;
+    width: 2px;
+    height: 370px;
+    background: linear-gradient(180deg, transparent, #0878E8, transparent);
+    transform: rotate(-30deg);
+    transform-origin: top;
   }
   .top, .footer { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
-  .brand { display: flex; align-items: center; gap: 16px; }
-  .brand__text { display: flex; flex-direction: column; line-height: 1; }
-  .brand__word {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 800;
-    font-size: 31px;
-    letter-spacing: 0.055em;
+  .logo-plate {
+    display: inline-flex;
+    padding: 11px 16px;
+    border-radius: 4px;
+    background: #F2F2F2;
   }
-  .brand__descriptor {
-    margin-top: 7px;
-    color: #A5B2C5;
-    font-size: 13px;
-    letter-spacing: 0.19em;
-    text-transform: uppercase;
-  }
+  .logo-plate img { display: block; width: auto; height: 38px; }
   .pill {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 10px 16px;
-    border: 1px solid rgba(53, 200, 232, 0.28);
+    padding: 9px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 999px;
-    background: rgba(20, 35, 58, 0.72);
-    color: #A5B2C5;
-    font-size: 13px;
-    letter-spacing: 0.11em;
+    color: #A0A0A0;
+    font-size: 12px;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
   }
-  .pill::before {
-    content: '';
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #35C8E8;
-    box-shadow: 0 0 16px rgba(53, 200, 232, 0.9);
-  }
-  .main { position: relative; z-index: 2; max-width: 890px; }
+  .pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0878E8; }
+  .main { position: relative; z-index: 2; max-width: 950px; }
   .eyebrow {
-    margin: 0 0 20px;
-    color: #35C8E8;
-    font-family: 'Manrope', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
+    margin: 0 0 18px;
+    color: #4DA3FF;
+    font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
   }
   h1 {
     margin: 0;
     font-family: 'Manrope', sans-serif;
-    font-size: 63px;
+    font-size: 62px;
     font-weight: 800;
-    line-height: 1.06;
-    letter-spacing: -0.035em;
+    line-height: 1.03;
+    letter-spacing: -0.04em;
   }
-  h1 span {
-    background: linear-gradient(100deg, #35C8E8 0%, #6FA8FF 46%, #1677FF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .sub {
-    margin: 24px 0 0;
-    max-width: 680px;
-    color: #A5B2C5;
-    font-size: 20px;
-    line-height: 1.55;
-  }
+  h1 span { color: #fff; }
+  .accent { display: block; width: 74px; height: 5px; margin-top: 22px; background: #0878E8; }
+  .sub { margin: 18px 0 0; max-width: 700px; color: #A0A0A0; font-size: 19px; line-height: 1.55; }
   .footer {
-    padding-top: 22px;
-    border-top: 1px solid rgba(38, 55, 80, 0.9);
-    color: #A5B2C5;
-    font-size: 13px;
-    letter-spacing: 0.055em;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: #A0A0A0;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
-  .footer strong { color: #F4F7FB; font-weight: 600; }
-  .footer__right { color: #7E8DA3; }
+  .footer strong { color: #fff; font-weight: 600; }
 </style>
 </head>
 <body>
   <div class="canvas">
     <div class="grid"></div>
-    <div class="glow glow--one"></div>
-    <div class="glow glow--two"></div>
-
+    <div class="angle"></div>
     <header class="top">
-      <div class="brand">
-        ${mark(48)}
-        <span class="brand__text">
-          <span class="brand__word">ALMATE</span>
-          <span class="brand__descriptor">Soluciones digitales</span>
-        </span>
-      </div>
-      <span class="pill">Ecosistema en evolución</span>
+      <span class="logo-plate"><img src="data:image/png;base64,${LOGO}" alt="ALMATE · Digital Studio"></span>
+      <span class="pill">Digital Studio</span>
     </header>
-
     <main class="main">
-      <p class="eyebrow">Productos · Sitios · Sistemas</p>
-      <h1>Transformamos ideas en <span>soluciones digitales</span>.</h1>
-      <p class="sub">Diseñamos y desarrollamos herramientas para que comercios, profesionales y empresas trabajen mejor y evolucionen.</p>
+      <p class="eyebrow">Sitios · Sistemas · Automatización</p>
+      <h1>Ideas que evolucionan.<br><span>Soluciones que transforman.</span></h1>
+      <span class="accent"></span>
+      <p class="sub">Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.</p>
     </main>
-
     <footer class="footer">
-      <span><strong>ALMATE</strong> · Tecnología con criterio. Diseño con intención.</span>
-      <span class="footer__right">Desarrollado por ALMATE · Soluciones digitales.</span>
+      <span><strong>ALMATE</strong> · Digital Studio</span>
+      <span>Desarrollado por ALMATE · Soluciones digitales.</span>
     </footer>
   </div>
 </body>
@@ -244,78 +184,71 @@ function iconHtml() {
 <head>
 <meta charset="utf-8">
 <style>
-  ${baseStyles()}
-  body {
-    background:
-      radial-gradient(140px 140px at 82% 10%, rgba(22, 119, 255, 0.45), transparent 68%),
-      linear-gradient(145deg, #14233A 0%, #0B1220 78%);
-  }
-  .icon {
-    position: relative;
-    width: 180px; height: 180px;
-    display: grid; place-items: center;
-  }
-  .icon::before {
-    content: '';
-    position: absolute;
-    inset: 24px;
-    border: 2px solid rgba(53, 200, 232, 0.2);
-    border-radius: 32px;
-    background: radial-gradient(circle at 32% 18%, rgba(53, 200, 232, 0.16), transparent 62%);
-  }
-  .letter {
-    position: relative;
-    font-family: 'Manrope', sans-serif;
-    font-size: 128px;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.06em;
-    background: linear-gradient(145deg, #F4F7FB 4%, #35C8E8 44%, #1677FF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    transform: translateY(-4px);
-  }
-  .dot {
-    position: absolute;
-    top: 34px; right: 37px;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #35C8E8;
-    box-shadow: 0 0 18px rgba(53, 200, 232, 0.9);
-  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { width: 180px; height: 180px; display: grid; place-items: center; background: #F2F2F2; }
+  img { display: block; width: 136px; height: 136px; object-fit: contain; }
 </style>
 </head>
 <body>
-  <div class="icon">
-    <span class="letter">A</span>
-    <span class="dot"></span>
-  </div>
+  <img src="data:image/png;base64,${MARK}" alt="ALMATE">
 </body>
 </html>`;
 }
 
-async function screenshot(chrome, html, output, width, height, workDir) {
-  const pagePath = join(workDir, `${width}x${height}.html`);
+function exportHtml(article) {
+  return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="social.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #1A1A1A; }
+  .slide { zoom: 1 !important; }
+</style>
+</head>
+<body>
+${article}
+</body>
+</html>`;
+}
+
+async function screenshot(chrome, html, output, width, height, workDir, name, pageDir = workDir) {
+  const pagePath = join(pageDir, `.render-${name}-${width}x${height}.html`);
   await writeFile(pagePath, html, 'utf8');
-  const userDataDir = join(workDir, `profile-${width}`);
-  await execFileAsync(
-    chrome,
-    [
-      '--headless=new',
-      '--disable-gpu',
-      '--hide-scrollbars',
-      '--no-first-run',
-      '--no-default-browser-check',
-      '--allow-file-access-from-files',
-      '--force-device-scale-factor=1',
-      `--user-data-dir=${userDataDir}`,
-      `--window-size=${width},${height}`,
-      `--screenshot=${output}`,
-      pathToFileURL(pagePath).href,
-    ],
-    { timeout: 60_000, windowsHide: true },
-  );
+  const userDataDir = join(workDir, `profile-${name}`);
+  try {
+    await execFileAsync(
+      chrome,
+      [
+        '--headless=new',
+        '--disable-gpu',
+        '--hide-scrollbars',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--allow-file-access-from-files',
+        '--force-device-scale-factor=1',
+        '--run-all-compositor-stages-before-draw',
+        '--virtual-time-budget=4000',
+        `--user-data-dir=${userDataDir}`,
+        `--window-size=${width},${height}`,
+        `--screenshot=${output}`,
+        pathToFileURL(pagePath).href,
+      ],
+      { timeout: 60_000, windowsHide: true },
+    );
+  } finally {
+    await rm(pagePath, { force: true });
+  }
+}
+
+const socialTemplates = ['marca', 'servicios', 'productos', 'educacion', 'proyectos'];
+
+function feedArticle(template) {
+  const html = readFileSync(join(socialDir, `${template}.html`), 'utf8');
+  const match = html.match(new RegExp(`<article[^>]*id="${template}-feed"[\\s\\S]*?</article>`));
+  if (!match) throw new Error(`No se encontró el artículo ${template}-feed`);
+  return match[0];
 }
 
 async function main() {
@@ -328,10 +261,28 @@ async function main() {
 
   const workDir = await mkdtemp(join(tmpdir(), 'almate-social-'));
   try {
-    await screenshot(chrome, ogHtml(), join(publicDir, 'og-image.png'), 1200, 630, workDir);
-    await screenshot(chrome, iconHtml(), join(publicDir, 'apple-touch-icon.png'), 180, 180, workDir);
+    await screenshot(chrome, ogHtml(), join(publicDir, 'og-image.png'), 1200, 630, workDir, 'og');
     console.log('  ✓ public/og-image.png (1200×630)');
+
+    await screenshot(chrome, iconHtml(), join(publicDir, 'apple-touch-icon.png'), 180, 180, workDir, 'icon');
     console.log('  ✓ public/apple-touch-icon.png (180×180)');
+
+    for (const template of socialTemplates) {
+      const html = exportHtml(feedArticle(template));
+      /* El HTML se renderiza dentro de social/ para que las rutas relativas
+         (social.css, logos, fuentes) se resuelvan igual que en la plantilla. */
+      await screenshot(
+        chrome,
+        html,
+        join(socialDir, `${template}-feed.png`),
+        1080,
+        1350,
+        workDir,
+        template,
+        socialDir,
+      );
+      console.log(`  ✓ social/${template}-feed.png (1080×1350)`);
+    }
   } finally {
     await rm(workDir, { recursive: true, force: true });
   }

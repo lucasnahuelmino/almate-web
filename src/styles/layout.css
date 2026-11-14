@@ -6,8 +6,8 @@
   top: 0;
   z-index: 100;
   border-bottom: 1px solid transparent;
-  background: rgba(11, 18, 32, 0.55);
-  backdrop-filter: blur(18px) saturate(130%);
+  background: rgba(26, 26, 26, 0.82);
+  backdrop-filter: blur(18px) saturate(120%);
   transition:
     background var(--transition),
     border-color var(--transition);
@@ -15,7 +15,7 @@
 
 .site-header.is-scrolled {
   border-bottom-color: var(--color-border-soft);
-  background: rgba(11, 18, 32, 0.9);
+  background: rgba(26, 26, 26, 0.97);
 }
 
 .header__inner {
@@ -32,6 +32,25 @@
   flex: 0 0 auto;
   min-height: 44px;
   color: var(--color-text);
+  /* El arte oficial es negro y transparente: se apoya siempre sobre una
+     superficie clara para garantizar contraste, sin filtros ni variantes. */
+  padding: 6px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--almate-mist);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.brand:hover {
+  background: var(--almate-white);
+  border-color: rgba(8, 120, 232, 0.45);
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--almate-blue-on-dark);
+  outline-offset: 3px;
 }
 
 .brand__accent {
@@ -39,7 +58,7 @@
   height: 30px;
   border-radius: 999px;
   background: var(--gradient-brand);
-  box-shadow: 0 0 18px rgba(53, 200, 232, 0.55);
+  box-shadow: 0 0 18px rgba(8, 120, 232, 0.55);
 }
 
 .brand__text {
@@ -67,7 +86,8 @@
 
 .brand__image {
   width: auto;
-  height: 34px;
+  height: 26px;
+  object-fit: contain;
 }
 
 .desktop-nav {
@@ -96,7 +116,7 @@
 
 .nav-link:hover {
   color: var(--color-text);
-  background: rgba(20, 35, 58, 0.72);
+  background: rgba(41, 41, 41, 0.72);
 }
 
 .nav-link.is-active {
@@ -130,7 +150,7 @@
   padding: 8px 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-  background: rgba(20, 35, 58, 0.68);
+  background: var(--color-surface);
   color: var(--color-text);
   font-size: 0.78rem;
 }
@@ -162,6 +182,7 @@
   position: fixed;
   inset: var(--header-height) 0 0;
   z-index: 95;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -179,7 +200,7 @@
 .mobile-menu__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(3, 8, 17, 0.7);
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(5px);
 }
 
@@ -195,7 +216,7 @@
   overflow-y: auto;
   border-left: 1px solid var(--color-border);
   background:
-    radial-gradient(500px 300px at 80% 0%, rgba(22, 119, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, rgba(8, 120, 232, 0.08), transparent 220px),
     var(--color-bg-alt);
   box-shadow: var(--shadow-lg);
   transform: translateX(102%);
@@ -248,7 +269,7 @@
 }
 
 .mobile-nav__item {
-  border-bottom: 1px solid rgba(38, 55, 80, 0.55);
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
 .mobile-nav__item .nav-link {
@@ -342,9 +363,7 @@
   position: relative;
   overflow: hidden;
   border-top: 1px solid var(--color-border);
-  background:
-    radial-gradient(900px 420px at 16% 0%, rgba(53, 200, 232, 0.08), transparent 66%),
-    var(--color-bg-alt);
+  background: var(--almate-carbon);
 }
 
 .footer__glow {
@@ -354,7 +373,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(22, 119, 255, 0.16), transparent 66%);
+  background: radial-gradient(circle, rgba(8, 120, 232, 0.12), transparent 66%);
   pointer-events: none;
 }
 
@@ -394,9 +413,9 @@
   gap: 8px;
   margin-top: 20px;
   padding: 7px 12px;
-  border: 1px solid rgba(74, 222, 154, 0.24);
+  border: 1px solid rgba(77, 163, 255, 0.24);
   border-radius: var(--radius-pill);
-  background: rgba(74, 222, 154, 0.06);
+  background: rgba(77, 163, 255, 0.06);
   color: var(--color-success);
   font-family: var(--font-mono);
   font-size: 0.63rem;
@@ -525,13 +544,13 @@
   gap: 9px;
   min-height: 54px;
   padding: 12px 18px 12px 14px;
-  border: 1px solid rgba(74, 222, 154, 0.38);
+  border: 1px solid rgba(77, 163, 255, 0.38);
   border-radius: var(--radius-pill);
   background: linear-gradient(135deg, rgba(19, 49, 44, 0.96), rgba(16, 32, 44, 0.98));
   color: #dcffef;
   font-size: 0.82rem;
   font-weight: 650;
-  box-shadow: 0 14px 38px rgba(2, 7, 16, 0.55), 0 0 0 1px rgba(74, 222, 154, 0.08);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(77, 163, 255, 0.08);
   transition:
     transform var(--transition),
     box-shadow var(--transition),
@@ -540,18 +559,18 @@
 
 .contact-fab:hover {
   transform: translateY(-3px);
-  border-color: rgba(74, 222, 154, 0.7);
-  box-shadow: 0 20px 50px rgba(2, 7, 16, 0.64), 0 0 30px rgba(74, 222, 154, 0.12);
+  border-color: rgba(77, 163, 255, 0.7);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.64), 0 0 30px rgba(77, 163, 255, 0.12);
 }
 
 .contact-fab--alt {
-  border-color: rgba(53, 200, 232, 0.36);
+  border-color: rgba(8, 120, 232, 0.36);
   background: linear-gradient(135deg, rgba(18, 38, 62, 0.98), rgba(13, 25, 43, 0.98));
   color: var(--color-text);
 }
 
 .contact-fab--alt:hover {
-  border-color: rgba(53, 200, 232, 0.7);
+  border-color: rgba(8, 120, 232, 0.7);
 }
 
 .contact-fab__icon {
@@ -560,11 +579,11 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgba(74, 222, 154, 0.14);
+  background: rgba(77, 163, 255, 0.14);
 }
 
 .contact-fab--alt .contact-fab__icon {
-  background: rgba(53, 200, 232, 0.12);
+  background: rgba(8, 120, 232, 0.12);
 }
 
 .contact-fab__icon .icon {

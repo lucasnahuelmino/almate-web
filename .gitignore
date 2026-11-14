@@ -9,3 +9,6 @@ Thumbs.db
 .env.*.local
 lighthouse-report.*
 reports/
+
+# Archivos personales del usuario (no forman parte del proyecto)
+public/Descargas/

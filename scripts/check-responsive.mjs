@@ -58,7 +58,7 @@ function findChrome() {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function waitForChrome() {
+async function waitForChrome(log = () => '') {
   for (let attempt = 0; attempt < 100; attempt += 1) {
     try {
       const response = await fetch(`http://127.0.0.1:${port}/json/version`);
@@ -68,7 +68,8 @@ async function waitForChrome() {
     }
     await sleep(100);
   }
-  throw new Error('Chrome no abrió el puerto de depuración.');
+  const detail = log().trim().slice(0, 500);
+  throw new Error(`Chrome no abrió el puerto de depuración.${detail ? ` ${detail}` : ''}`);
 }
 
 async function createTarget() {
@@ -152,6 +153,7 @@ async function main() {
 
   await mkdir(outputDir, { recursive: true });
   const profileDir = await mkdtemp(join(tmpdir(), 'almate-cdp-'));
+  let chromeLog = '';
   const process = spawn(
     chrome,
     [
@@ -160,16 +162,20 @@ async function main() {
       '--hide-scrollbars',
       '--no-first-run',
       '--no-default-browser-check',
+      '--no-proxy-server',
       `--remote-debugging-port=${port}`,
       `--user-data-dir=${profileDir}`,
       'about:blank',
     ],
-    { stdio: 'ignore', windowsHide: true },
+    { stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true },
   );
+  process.stderr.on('data', (chunk) => {
+    chromeLog += chunk.toString();
+  });
 
   let client;
   try {
-    await waitForChrome();
+    await waitForChrome(() => chromeLog);
     const target = await createTarget();
     client = await connect(target.webSocketDebuggerUrl);
     await client.send('Page.enable');
@@ -319,7 +325,8 @@ async function main() {
       client.ws.close();
     }
     process.kill();
-    await rm(profileDir, { recursive: true, force: true });
+    await sleep(500);
+    await rm(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }).catch(() => {});
   }
 }
 
