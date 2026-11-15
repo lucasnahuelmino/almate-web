@@ -1,46 +1,75 @@
 # Imágenes del portfolio
 
 Las capturas del portfolio **no están publicadas todavía**. Este documento
-define el estándar para incorporarlas sin inventar material ni romper las
-fichas de `src/data/projects.js`.
+define el estándar, el inventario y los nombres de archivo para incorporarlas
+sin inventar material ni romper las fichas de `src/data/projects.js`.
 
-## Formato
+Estado verificado: los 8 proyectos siguen con `cover: null` y `demoUrl: null`.
+No existe ninguna captura real ni URL pública verificable para ellos. Por eso
+`ProjectCard` muestra un placeholder conceptual discreto.
+
+## Formato y estándar
 
 | Requisito | Valor |
 |---|---|
-| Formato | WebP |
-| Tamaño | 1600 × 1000 px |
-| Relación | 16:10 |
+| Formato | WebP (exportado desde PNG o JPG sin pérdida visible) |
+| Resolución | 1600 × 1000 px |
+| Proporción | 16:10 |
 | Peso objetivo | ≤ 280 kB |
 | Perfil de color | sRGB |
-| Ubicación | `public/images/projects/` |
+| Carpeta de destino | `public/images/projects/` |
+| Nombre | Igual al campo `coverFile` de cada proyecto |
 | Texto alternativo | Descriptivo, en español, sin repetir el nombre del proyecto |
 
-> Mientras un proyecto tenga `cover: null`, `ProjectCard` muestra una vista
-> conceptual generada. No se publica una captura que no corresponda a una
-> interfaz real.
+Recomendaciones de captura:
+
+- Tomarla en escritorio a 1440 px de ancho, con la barra del navegador recortada.
+- Mostrar la pantalla principal o la vista más representativa del proyecto.
+- Ocultar datos personales de clientes, precios internos o credenciales.
+- Usar solo sitios propios o con autorización escrita del cliente.
 
 ## Inventario
 
-| # | Archivo | Proyecto | Categoría | Estado | Alt sugerido |
-|---|---|---|---|---|---|
-| 1 | `ferreteria-el-yunque.webp` | Ferretería El Yunque | Comercio | ⏳ Pendiente | Captura del catálogo de Ferretería El Yunque con categorías y ficha de producto |
-| 2 | `mesa-brava.webp` | MESA BRAVA | Gastronomía | ⏳ Pendiente | Captura del sitio de MESA BRAVA con carta y reservas |
-| 3 | `demo-estetica.webp` | Demo de estética | Estética y belleza | ⏳ Pendiente | Captura del sitio de estética con servicios y reserva online |
-| 4 | `estudio-umbral.webp` | ESTUDIO UMBRAL | Estudio creativo | ⏳ Pendiente | Captura del portfolio de ESTUDIO UMBRAL |
-| 5 | `cima-bazar.webp` | CIMA | Ecommerce | ⏳ Pendiente | Captura de la tienda online CIMA con grilla de productos |
-| 6 | `almate-nexo-stock.webp` | ALMATE Nexo Stock | Sistemas de gestión | ⏳ Pendiente | Captura del panel de stock y ventas de ALMATE Nexo |
-| 7 | `almate-propiedades.webp` | ALMATE Propiedades | Inmobiliaria | ⏳ Pendiente | Captura del catálogo de propiedades con filtros |
-| 8 | `cuarto-menguante.webp` | Cuarto Menguante | Estudio creativo | ⏳ Pendiente | Captura del sitio de Cuarto Menguante con discografía y fechas |
+Los nombres del brief y los nombres de los datos corresponden a los mismos
+proyectos. La columna «Nombre en el sitio» es la que aparece en la web.
+
+| # | Nombre en el brief | Nombre en el sitio | Archivo (`public/images/projects/`) | Categoría | Página de uso | Contenido que debe aparecer | Estado |
+|---|---|---|---|---|---|---|---|
+| 1 | ALMATE Ferretería | Ferretería El Yunque | `ferreteria-el-yunque.webp` | Comercio | `/proyectos/` · Inicio (destacado) | Catálogo por rubros y ficha de producto | ⏳ Pendiente |
+| 2 | Mesa Brava | MESA BRAVA | `mesa-brava.webp` | Gastronomía | `/proyectos/` · Inicio (destacado) | Carta y reservas | ⏳ Pendiente |
+| 3 | ALMATE Estética | Demo de estética | `demo-estetica.webp` | Estética y belleza | `/proyectos/` | Servicios y reserva online | ⏳ Pendiente |
+| 4 | — | ESTUDIO UMBRAL | `estudio-umbral.webp` | Estudio creativo | `/proyectos/` | Portfolio o landing del estudio | ⏳ Pendiente |
+| 5 | ALMATE Ecommerce Cima | CIMA | `cima-bazar.webp` | Ecommerce | `/proyectos/` · Inicio (destacado) | Grilla de productos de la tienda | ⏳ Pendiente |
+| 6 | — | ALMATE Nexo Stock | `almate-nexo-stock.webp` | Sistemas de gestión | `/proyectos/` | Panel de stock y ventas | ⏳ Pendiente |
+| 7 | ALMATE Inmobiliaria | ALMATE Propiedades | `almate-propiedades.webp` | Inmobiliaria | `/proyectos/` | Catálogo con filtros | ⏳ Pendiente |
+| 8 | CuartoMenguante | Cuarto Menguante | `cuarto-menguante.webp` | Estudio creativo | `/proyectos/` | Discografía y fechas | ⏳ Pendiente |
+
+Los proyectos marcados como destacados aparecen también en la portada, por lo
+que su captura tiene prioridad (1, 2 y 5).
+
+## Capturas adicionales necesarias
+
+Hoy el código solo usa una imagen por proyecto (`cover`). Para una ficha
+completa conviene preparar, además, lo siguiente. Aún no hay campos en el
+código para estas imágenes; se incorporarán cuando existan los archivos.
+
+| Proyecto | Adicional | Uso previsto |
+|---|---|---|
+| Ferretería El Yunque | Móvil (390 px de ancho) de catálogo | Vista responsive en la ficha |
+| MESA BRAVA | Detalle de la carta | Galería futura |
+| CIMA | Ficha de producto | Galería futura |
+| ALMATE Propiedades | Ficha individual de propiedad | Galería futura |
+| Todos | Logo o marca del cliente, si autorizan su uso | Ficha de proyecto |
 
 ## Cómo incorporar una captura
 
-1. Guardar la imagen como WebP 1600 × 1000 en `public/images/projects/`.
+1. Guardar la imagen como WebP 1600 × 1000 en `public/images/projects/`
+   con el nombre indicado en la tabla.
 2. Completar en `src/data/projects.js`:
 
    ```js
    cover: '/images/projects/ferreteria-el-yunque.webp',
-   coverAlt: 'Captura del catálogo de Ferretería El Yunque con categorías y ficha de producto',
+   coverAlt: 'Catálogo de Ferretería El Yunque con categorías y ficha de producto',
    coverWidth: 1600,
    coverHeight: 1000,
    ```
@@ -48,8 +77,8 @@ fichas de `src/data/projects.js`.
 3. Si existe una demo pública verificable, completar `demoUrl` con la URL
    real. Si no existe, dejar `demoUrl: null`.
 4. Ejecutar `npm run generate && npm run build && npm run verify`.
-5. Revisar la ficha en `/proyectos/` y confirmar que la imagen carga, tiene
-   `alt` y mantiene la relación de aspecto.
+5. Revisar la ficha en `/proyectos/` (y en Inicio si es destacada): la imagen
+   debe cargar, tener `alt` y mantener la relación 16:10.
 
 ## Reglas
 
@@ -59,3 +88,5 @@ fichas de `src/data/projects.js`.
   ruta local.
 - Si un proyecto no tiene captura ni demo, se conserva el placeholder y la
   ficha sigue siendo válida.
+- Cada proyecto debe conservar su `disclaimer`: indica que es una demostración
+  de trabajo y no un caso de cliente real.
