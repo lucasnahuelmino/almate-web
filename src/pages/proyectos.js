@@ -2,14 +2,14 @@ import { CTASection } from '../components/CTASection.js';
 import { PageHero } from '../components/PageHero.js';
 import { ProjectCard } from '../components/ProjectCard.js';
 import { ProjectFilters } from '../components/ProjectFilters.js';
-import { projects, getProjectStatus } from '../data/projects.js';
+import { projects } from '../data/projects.js';
 import { icon } from '../lib/icons.js';
 import { route } from '../lib/paths.js';
 import { breadcrumbSchema, collectionSchema } from '../lib/seo.js';
 
 const aside = `<div class="portfolio-note" aria-label="Criterio del portfolio">
   <span class="portfolio-note__icon" aria-hidden="true">${icon('shield')}</span>
-  <p><strong>Portfolio verificable.</strong> Mostramos prototipos que existen en el ecosistema ALMATE. Las demos se publican solo cuando tienen una URL real; no inventamos casos, clientes ni resultados.</p>
+  <p><strong>Portfolio en preparación.</strong> Estamos incorporando capturas reales de cada proyecto. Las demos se publican solo cuando tienen una URL verificable; no inventamos casos, clientes ni resultados.</p>
 </div>`;
 
 export function ProyectosPage() {
@@ -22,7 +22,7 @@ export function ProyectosPage() {
       eyebrow: 'Proyectos',
       title: 'Trabajo real, mostrado con <span class="text-gradient">transparencia</span>.',
       description:
-        'Una selección de prototipos desarrollados dentro del ecosistema ALMATE. Cada proyecto indica su estado real y si tiene una demostración pública disponible.',
+        'Una selección de sitios, tiendas y sistemas desarrollados dentro del ecosistema ALMATE. Cada ficha muestra el tipo de solución y el canal para consultar. Las capturas y demos se publican solo cuando son reales.',
       actions: [
         { label: 'Hablemos de tu proyecto', href: route('/contacto/'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
         { label: 'Ver soluciones', href: route('/soluciones/'), variant: 'secondary', iconName: 'code', size: 'large' },
@@ -35,13 +35,13 @@ export function ProyectosPage() {
         <div class="portfolio-head">
           <div>
             <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Selección de proyectos</span></p>
-            <h2 class="portfolio-head__title" id="portfolio-title">Prototipos del ecosistema.</h2>
+            <h2 class="portfolio-head__title" id="portfolio-title">Proyectos del ecosistema.</h2>
             <p class="portfolio-head__description">
-              Sitios comerciales, tiendas, portfolios y sistemas de gestión. Los recursos visuales son composiciones originales de cada interfaz; las demostraciones se abren en una pestaña nueva cuando están publicadas.
+              Sitios comerciales, tiendas, portfolios y sistemas de gestión. Las vistas conceptuales se reemplazan por capturas reales a medida que cada proyecto queda preparado. Las demos se abren en una pestaña nueva cuando están publicadas.
             </p>
           </div>
           <div class="portfolio-legend">
-            <span>${icon('check-circle')} Estado visible en cada ficha</span>
+            <span>${icon('grid')} Captura real cuando está disponible</span>
             <span>${icon('external')} Demo externa cuando existe</span>
           </div>
         </div>
@@ -49,9 +49,7 @@ export function ProyectosPage() {
         ${ProjectFilters()}
 
         <div class="project-grid project-grid--portfolio" data-project-grid>
-          ${projects
-            .map((project) => ProjectCard({ project, status: getProjectStatus(project.status) }))
-            .join('')}
+          ${projects.map((project) => ProjectCard({ project })).join('')}
         </div>
         <div class="project-empty" data-project-empty hidden>
           <span class="project-empty__icon" aria-hidden="true">${icon('filter')}</span>
@@ -65,14 +63,14 @@ export function ProyectosPage() {
       <div class="container">
         <div class="criteria-panel" data-reveal>
           <div class="criteria-panel__intro">
-            <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Cómo leemos un proyecto</span></p>
-            <h2 id="criteria-title">El estado también comunica.</h2>
-            <p>Un prototipo no es un caso de éxito. Un producto en desarrollo no es un producto disponible. Preferimos mostrarlo así antes que llenar el portfolio de promesas.</p>
+            <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Cómo presentamos un proyecto</span></p>
+            <h2 id="criteria-title">El contexto también comunica.</h2>
+            <p>Cada ficha explica qué tipo de solución es, para quién se pensó y qué canal permite consultar. No publicamos capturas que no correspondan a una interfaz real ni demos que no existan.</p>
           </div>
           <div class="criteria-panel__items">
-            <div><span>${icon('clock')}</span><strong>Prototipo</strong><p>Existe una versión funcional en el ecosistema, todavía sin demo pública.</p></div>
-            <div><span>${icon('code')}</span><strong>En desarrollo</strong><p>El proyecto está en construcción y su alcance puede evolucionar.</p></div>
-            <div><span>${icon('external')}</span><strong>Demo publicada</strong><p>Solo cuando existe una URL verificable se habilita el enlace externo.</p></div>
+            <div><span>${icon('target')}</span><strong>Contexto</strong><p>El rubro, el público y la necesidad que originó el proyecto.</p></div>
+            <div><span>${icon('layers')}</span><strong>Enfoque</strong><p>Las decisiones de diseño, contenido y funcionalidad que lo definen.</p></div>
+            <div><span>${icon('external')}</span><strong>Demo verificable</strong><p>Solo cuando existe una URL pública se habilita el enlace externo.</p></div>
           </div>
         </div>
       </div>
@@ -103,7 +101,7 @@ export function ProyectosPage() {
     path: '/proyectos/',
     title: 'Proyectos',
     description:
-      'Portfolio de prototipos ALMATE: comercio, gastronomía, estética, estudio creativo, ecommerce, sistemas de gestión e inmobiliaria. Estados reales y demos verificables.',
+      'Portfolio ALMATE: comercio, gastronomía, estética, estudio creativo, ecommerce, sistemas de gestión e inmobiliaria. Capturas reales y demos verificables cuando están disponibles.',
     body,
     schema: [
       breadcrumbSchema([

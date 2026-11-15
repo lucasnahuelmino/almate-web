@@ -1,4 +1,4 @@
-import { site, hasDirectContact, hasEmail, hasWhatsApp } from '../config/site.config.js';
+import { site, hasEmail, hasWhatsApp } from '../config/site.config.js';
 import { getContactSolutionOptions } from '../data/services.js';
 import { icon } from '../lib/icons.js';
 import { escapeAttr, escapeHtml } from '../lib/html.js';
@@ -13,7 +13,6 @@ function field({
   hint = '',
   maxlength = '',
   inputmode = '',
-  autofocus = false,
 }) {
   return `<div class="field" data-field="${id}">
     <label class="field__label" for="${id}">
@@ -30,7 +29,6 @@ function field({
       ${maxlength ? `maxlength="${maxlength}"` : ''}
       ${inputmode ? `inputmode="${escapeAttr(inputmode)}"` : ''}
       aria-describedby="${id}-error${hint ? ` ${id}-hint` : ''}"
-      ${autofocus ? 'data-autofocus="true"' : ''}
     >
     ${hint ? `<p class="field__hint" id="${id}-hint">${escapeHtml(hint)}</p>` : ''}
     <p class="field__error" id="${id}-error" data-error-for="${id}"></p>
@@ -70,16 +68,10 @@ function selectField() {
 }
 
 export function ContactForm() {
-  const submitLabel = hasWhatsApp
-    ? 'Preparar consulta para WhatsApp'
-    : hasEmail
-      ? 'Preparar consulta por correo'
-      : 'Preparar consulta';
-
   return `<form class="contact-form" data-contact-form novalidate>
     <div class="contact-form__intro">
       <span class="contact-form__eyebrow">${icon('terminal')} Formulario de consulta</span>
-      <p>Contanos lo esencial. La consulta se prepara en tu dispositivo y se abre en el canal elegido.</p>
+      <p>Contanos lo esencial. La consulta se envía por correo a ALMATE y también podés iniciarla por WhatsApp.</p>
     </div>
 
     <div class="form-grid">
@@ -133,12 +125,18 @@ export function ContactForm() {
           placeholder="Qué necesitás resolver, cómo trabajás hoy y qué te gustaría mejorar."
           aria-describedby="message-error message-hint"
         ></textarea>
-        <p class="field__hint" id="message-hint">Mínimo 10 caracteres. Sin datos sensibles.</p>
+        <p class="field__hint" id="message-hint">Mínimo 10 caracteres. No incluyas datos sensibles.</p>
         <p class="field__error" id="message-error" data-error-for="message"></p>
       </div>
     </div>
 
     <input type="hidden" name="context" data-context-input value="">
+
+    <!-- Honeypot anti-spam: invisible para personas, no debe completarse. -->
+    <div class="form-honeypot" aria-hidden="true">
+      <label for="website">No completar</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
 
     <div class="form-consent field" data-field="consent">
       <label class="checkbox" for="consent">
@@ -151,15 +149,23 @@ export function ContactForm() {
 
     <div class="form-note">
       ${icon('info')}
-      <p>${escapeHtml(hasDirectContact ? site.contact.note : site.contact.pendingNote)}</p>
+      <p>${escapeHtml(hasEmail ? site.contact.note : site.contact.pendingNote)}</p>
     </div>
 
     <div class="contact-form__actions">
       <button class="btn btn--primary btn--large" type="submit" data-submit>
-        <span class="btn__label">${escapeHtml(submitLabel)}</span>
+        <span class="btn__label">Enviar consulta</span>
         <span class="btn__icon" aria-hidden="true">${icon('arrow-up-right')}</span>
       </button>
-      <button class="btn btn--secondary btn--large" type="button" data-copy-message>
+      ${
+        hasWhatsApp
+          ? `<button class="btn btn--secondary btn--large" type="button" data-whatsapp-submit>
+              <span class="btn__label">Enviar por WhatsApp</span>
+              <span class="btn__icon" aria-hidden="true">${icon('whatsapp')}</span>
+            </button>`
+          : ''
+      }
+      <button class="btn btn--ghost btn--large" type="button" data-copy-message>
         <span class="btn__label">Copiar consulta</span>
         <span class="btn__icon" aria-hidden="true">${icon('copy')}</span>
       </button>

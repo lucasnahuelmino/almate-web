@@ -14,6 +14,7 @@
     "verify": "node scripts/verify.mjs",
     "check:responsive": "node scripts/check-responsive.mjs",
     "test:assistant": "node scripts/test-assistant.mjs",
+    "test:contact": "node scripts/test-contact.mjs",
     "image:og": "node scripts/generate-social.mjs"
   },
   "dependencies": {

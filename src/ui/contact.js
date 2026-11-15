@@ -1,5 +1,4 @@
 import {
-  getEmailUrl,
   getWhatsAppUrl,
   hasEmail,
   hasWhatsApp,
@@ -8,12 +7,29 @@ import {
 import { getCategoryById, getServiceById } from '../data/services.js';
 import { getProductById } from '../data/products.js';
 import { getProjectById } from '../data/projects.js';
+import { asset } from '../lib/paths.js';
+
+const LIMITS = {
+  name: 80,
+  company: 100,
+  email: 120,
+  phone: 30,
+  message: 1500,
+  context: 300,
+};
 
 function setStatus(status, type, message) {
   if (!status) return;
   status.hidden = false;
   status.className = `form-status form-status--${type}`;
   status.textContent = message;
+}
+
+function clearStatus(status) {
+  if (!status) return;
+  status.hidden = true;
+  status.textContent = '';
+  status.className = 'form-status';
 }
 
 function copyText(value) {
@@ -46,8 +62,11 @@ export function initContactForm() {
 
   const status = form.querySelector('[data-form-status]');
   const submit = form.querySelector('[data-submit]');
+  const whatsappButton = form.querySelector('[data-whatsapp-submit]');
   const copyButton = form.querySelector('[data-copy-message]');
   const contextInput = form.querySelector('[data-context-input]');
+  const honeypot = form.querySelector('#website');
+  const submitLabel = submit ? submit.querySelector('.btn__label') : null;
   const fields = {
     name: form.querySelector('#name'),
     company: form.querySelector('#company'),
@@ -60,24 +79,31 @@ export function initContactForm() {
 
   if (Object.values(fields).some((field) => !field)) return;
 
-  let lastMessage = '';
+  const endpoint = asset(site.contact.endpoint || '/api/contact');
   const touched = new Set();
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const phonePattern = /^[+()\d\s.-]{6,}$/;
+  let busy = false;
 
   const validators = {
     name(value) {
-      if (value.trim().length < 2) return 'Ingresá tu nombre (mínimo 2 caracteres).';
+      const clean = value.trim();
+      if (clean.length < 2) return 'Ingresá tu nombre (mínimo 2 caracteres).';
+      if (clean.length > LIMITS.name) return `Máximo ${LIMITS.name} caracteres.`;
       return '';
     },
     email(value) {
-      if (!value.trim()) return 'Ingresá tu email.';
-      if (!emailPattern.test(value.trim())) return 'Ingresá un email con formato válido.';
+      const clean = value.trim();
+      if (!clean) return 'Ingresá tu email.';
+      if (clean.length > LIMITS.email) return `Máximo ${LIMITS.email} caracteres.`;
+      if (!emailPattern.test(clean)) return 'Ingresá un email con formato válido.';
       return '';
     },
     phone(value) {
-      if (!value.trim()) return '';
-      if (!phonePattern.test(value.trim())) return 'Revisá el teléfono ingresado.';
+      const clean = value.trim();
+      if (!clean) return '';
+      if (clean.length > LIMITS.phone) return `Máximo ${LIMITS.phone} caracteres.`;
+      if (!phonePattern.test(clean)) return 'Revisá el teléfono ingresado.';
       return '';
     },
     solution(value) {
@@ -85,7 +111,9 @@ export function initContactForm() {
       return '';
     },
     message(value) {
-      if (value.trim().length < 10) return 'Contanos un poco más (mínimo 10 caracteres).';
+      const clean = value.trim();
+      if (clean.length < 10) return 'Contanos un poco más (mínimo 10 caracteres).';
+      if (clean.length > LIMITS.message) return `Máximo ${LIMITS.message} caracteres.`;
       return '';
     },
     consent(_value, field) {
@@ -152,26 +180,49 @@ export function initContactForm() {
     return `Consulta de ${name} — ${selectedSolution()}`;
   };
 
-  const channelLabel = hasWhatsApp ? 'WhatsApp' : hasEmail ? 'correo' : '';
+  const payload = () => ({
+    name: fields.name.value.trim(),
+    company: fields.company.value.trim(),
+    email: fields.email.value.trim(),
+    phone: fields.phone.value.trim(),
+    solution: fields.solution.value,
+    solutionLabel: selectedSolution(),
+    context: contextInput ? contextInput.value.trim().slice(0, LIMITS.context) : '',
+    message: fields.message.value.trim(),
+    consent: fields.consent.checked,
+    website: honeypot ? honeypot.value : '',
+    source: `${window.location.pathname}${window.location.search}`,
+  });
 
-  const openChannel = (message) => {
-    if (hasWhatsApp) {
-      const url = getWhatsAppUrl(message);
-      if (url) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return 'whatsapp';
-      }
+  const setBusy = (value) => {
+    busy = value;
+    [submit, whatsappButton, copyButton].forEach((button) => {
+      if (button) button.disabled = value;
+    });
+    if (submit) submit.setAttribute('aria-busy', String(value));
+    if (submitLabel) {
+      submitLabel.textContent = value ? 'Enviando…' : 'Enviar consulta';
     }
+  };
 
-    if (hasEmail) {
-      const url = getEmailUrl({ subject: subject(), body: message });
-      if (url) {
-        window.location.href = url;
-        return 'email';
-      }
+  const focusFirstError = (firstError) => {
+    if (!firstError) return;
+    const field = fields[firstError.name];
+    if (!field) return;
+    field.focus();
+    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const validateBeforeAction = () => {
+    Object.keys(validators).forEach((name) => touched.add(name));
+    const results = validateAll();
+    const firstError = results.find((result) => result.message);
+    if (firstError) {
+      setStatus(status, 'error', site.contact.validation);
+      focusFirstError(firstError);
+      return null;
     }
-
-    return 'none';
+    return results;
   };
 
   Object.entries(fields).forEach(([name, field]) => {
@@ -187,76 +238,101 @@ export function initContactForm() {
     });
   });
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    Object.keys(validators).forEach((name) => touched.add(name));
-    const results = validateAll();
-    const firstError = results.find((result) => result.message);
+    if (busy) return;
+    clearStatus(status);
+    if (!validateBeforeAction()) return;
 
-    if (firstError) {
-      setStatus(
-        status,
-        'error',
-        'Revisá los campos marcados. No se abrió ningún canal de envío.',
-      );
-      const field = fields[firstError.name];
-      if (field) {
-        field.focus();
-        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setBusy(true);
+    setStatus(status, 'sending', site.contact.sending);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload()),
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
       }
-      return;
+
+      if (response.ok && data && data.ok) {
+        setStatus(status, 'success', site.contact.success);
+        fields.message.value = '';
+        fields.consent.checked = false;
+        touched.delete('message');
+        touched.delete('consent');
+        setFieldError('message', '');
+        setFieldError('consent', '');
+        return;
+      }
+
+      if (response.status === 422) {
+        const serverFields = data && data.fields ? data.fields : {};
+        Object.entries(serverFields).forEach(([name, message]) => {
+          if (name in validators) setFieldError(name, String(message));
+        });
+        setStatus(status, 'error', site.contact.validation);
+        const first = Object.keys(serverFields)[0];
+        if (first && fields[first]) fields[first].focus();
+        return;
+      }
+
+      if (response.status === 429) {
+        setStatus(status, 'error', site.contact.rateLimited);
+        return;
+      }
+
+      if (response.status === 503) {
+        setStatus(status, 'info', site.contact.notConfigured);
+        return;
+      }
+
+      setStatus(status, 'error', site.contact.serverError);
+    } catch {
+      setStatus(status, 'error', site.contact.serverError);
+    } finally {
+      setBusy(false);
     }
+  });
 
-    const message = buildMessage();
-    lastMessage = message;
-    const channel = openChannel(message);
+  if (whatsappButton) {
+    whatsappButton.addEventListener('click', () => {
+      if (busy) return;
+      clearStatus(status);
+      if (!validateBeforeAction()) return;
 
-    if (channel === 'whatsapp') {
-      setStatus(
-        status,
-        'success',
-        `Abrimos WhatsApp con tu consulta preparada. Revisá el mensaje y enviálo desde tu aplicación. También podés copiarla con el botón de abajo.`,
-      );
-      if (submit) submit.blur();
-      return;
-    }
-
-    if (channel === 'email') {
+      const url = getWhatsAppUrl(buildMessage());
+      if (!url) {
+        setStatus(status, 'error', site.contact.notConfigured);
+        return;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
       setStatus(
         status,
         'info',
-        'Abrimos tu cliente de correo con la consulta preparada. Revisá el mensaje y enviálo desde tu correo. También podés copiarla con el botón de abajo.',
+        'Abrimos WhatsApp con tu consulta preparada. Revisá el mensaje y enviálo desde tu aplicación.',
       );
-      return;
-    }
-
-    setStatus(status, 'error', site.contact.pendingNote);
-  });
+    });
+  }
 
   if (copyButton) {
     copyButton.addEventListener('click', async () => {
-      if (!lastMessage) {
-        const results = validateAll();
-        const firstError = results.find((result) => result.message);
-        if (firstError) {
-          setStatus(
-            status,
-            'error',
-            'Completá los campos obligatorios para poder preparar y copiar la consulta.',
-          );
-          const field = fields[firstError.name];
-          if (field) field.focus();
-          return;
-        }
-        lastMessage = buildMessage();
-      }
+      if (busy) return;
+      const results = validateBeforeAction();
+      if (!results) return;
 
       try {
-        await copyText(lastMessage);
+        await copyText(buildMessage());
         setStatus(
           status,
           'info',
-          `Consulta copiada. Pegala en ${channelLabel || 'el canal que prefieras'} para enviarla.`,
+          `Consulta copiada. Pegala en ${hasWhatsApp ? 'WhatsApp' : hasEmail ? 'tu correo' : 'el canal que prefieras'} para enviarla.`,
         );
       } catch {
         setStatus(
@@ -286,12 +362,13 @@ export function initContactForm() {
         if (first) fields.solution.value = first.id;
       } else {
         const service = getServiceById(solutionParam);
-        if (service) fields.solution.value = service.id;
-        else {
+        if (service) {
+          fields.solution.value = service.id;
+        } else {
           const product = getProductById(solutionParam);
           if (product) {
             fields.solution.value = 'otro';
-            if (contextInput) contextInput.value = `Producto de interés: ${product.name}`;
+            if (contextInput) contextInput.value = `Solución de interés: ${product.name}`;
           }
         }
       }

@@ -38,7 +38,7 @@
   <header class="site-header" data-header>
     <div class="container header__inner">
       <a class="brand brand--header" href="/" aria-label="ALMATE · Digital Studio — Inicio">
-      <img class="brand__image" src="/logo_almate.png" width="620" height="165" alt="ALMATE · Digital Studio" decoding="async" fetchpriority="high">
+      <img class="brand__image brand__image--invert" src="/logo_almate.png" width="620" height="165" alt="ALMATE · Digital Studio" decoding="async" fetchpriority="high">
     </a>
       <nav class="desktop-nav" aria-label="Navegación principal">
         <ul class="desktop-nav__list"><li>
@@ -150,8 +150,8 @@
             <span class="btn__label">Hablemos de tu proyecto</span>
             <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
           </a>
-          <a class="mobile-menu__contact-link" href="/contacto/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>Ir a contacto</span></a>
-          <p class="mobile-menu__meta">Digital Studio · Ecosistema en evolución</p>
+          <div class="mobile-menu__contact"><a href="https://wa.me/5491134761743?text=Hola%20ALMATE.%20Quiero%20contarles%20sobre%20un%20proyecto%20digital%20y%20conocer%20c%C3%B3mo%20pueden%20ayudarme." target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/><path d="M8.5 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.2.2-.2.3 0 .6.7 1.1 1.6 1.9 2.8 2.5.3.1.5.1.7-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5 0 .3-.2 1-.8 1.4-.5.4-1.2.6-2 .4-1.3-.3-2.8-1-4.1-2.3-1.2-1.2-2-2.6-2.3-3.8-.2-.8 0-1.5.3-2Z"/></svg><span>WhatsApp</span></a><a href="mailto:almate.digitalstudio@gmail.com?subject=Consulta%20desde%20el%20sitio%20de%20ALMATE"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>almate.digitalstudio@gmail.com</span></a></div>
+          <p class="mobile-menu__meta">Digital Studio · Soluciones digitales</p>
         </div>
       </div>
     </div>
@@ -200,13 +200,13 @@
           <div class="contact-layout__form">
             <div class="contact-form-heading">
               <p class="eyebrow"><span class="eyebrow__index">01</span><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Formulario</span></p>
-              <h2 id="contact-form-title">Prepará tu consulta.</h2>
-              <p>Completá los campos y elegí el canal. No se envía información a un servidor de ALMATE en esta etapa: tu consulta se abre en WhatsApp o en tu cliente de correo.</p>
+              <h2 id="contact-form-title">Enviá tu consulta.</h2>
+              <p>Completá los campos y enviá la consulta por correo. Si preferís una respuesta inmediata, también podés enviarla por WhatsApp o copiarla.</p>
             </div>
             <form class="contact-form" data-contact-form novalidate>
     <div class="contact-form__intro">
       <span class="contact-form__eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><path d="M13 15h4"/></svg> Formulario de consulta</span>
-      <p>Contanos lo esencial. La consulta se prepara en tu dispositivo y se abre en el canal elegido.</p>
+      <p>Contanos lo esencial. La consulta se envía por correo a ALMATE y también podés iniciarla por WhatsApp.</p>
     </div>
 
     <div class="form-grid">
@@ -225,7 +225,6 @@
       maxlength="80"
       
       aria-describedby="name-error"
-      
     >
     
     <p class="field__error" id="name-error" data-error-for="name"></p>
@@ -245,7 +244,6 @@
       maxlength="100"
       
       aria-describedby="company-error"
-      
     >
     
     <p class="field__error" id="company-error" data-error-for="company"></p>
@@ -265,7 +263,6 @@
       maxlength="120"
       inputmode="email"
       aria-describedby="email-error"
-      
     >
     
     <p class="field__error" id="email-error" data-error-for="email"></p>
@@ -285,7 +282,6 @@
       maxlength="30"
       inputmode="tel"
       aria-describedby="phone-error"
-      
     >
     
     <p class="field__error" id="phone-error" data-error-for="phone"></p>
@@ -305,6 +301,8 @@
               <option value="procesos-administrativos">Automatización de procesos administrativos</option><option value="planillas-inteligentes">Planillas inteligentes</option><option value="procesamiento-datos">Procesamiento de datos</option><option value="automatizaciones-operativas">Automatizaciones operativas</option>
             </optgroup><optgroup label="Desarrollo personalizado">
               <option value="aplicaciones-internas">Aplicaciones internas</option><option value="integraciones">Integraciones</option><option value="herramientas-internas">Herramientas internas</option><option value="soluciones-especificas">Soluciones específicas</option>
+            </optgroup><optgroup label="Líneas de solución ALMATE">
+              <option value="comercial">ALMATE Comercial</option><option value="servicios">ALMATE Servicios</option><option value="inmobiliaria">ALMATE Inmobiliaria</option><option value="creativa">ALMATE Creativa</option><option value="nexo">ALMATE Nexo</option><option value="ecommerce">ALMATE Ecommerce</option>
             </optgroup>
         <optgroup label="Todavía no lo sé">
           <option value="no-se">No lo sé todavía</option>
@@ -330,12 +328,18 @@
           placeholder="Qué necesitás resolver, cómo trabajás hoy y qué te gustaría mejorar."
           aria-describedby="message-error message-hint"
         ></textarea>
-        <p class="field__hint" id="message-hint">Mínimo 10 caracteres. Sin datos sensibles.</p>
+        <p class="field__hint" id="message-hint">Mínimo 10 caracteres. No incluyas datos sensibles.</p>
         <p class="field__error" id="message-error" data-error-for="message"></p>
       </div>
     </div>
 
     <input type="hidden" name="context" data-context-input value="">
+
+    <!-- Honeypot anti-spam: invisible para personas, no debe completarse. -->
+    <div class="form-honeypot" aria-hidden="true">
+      <label for="website">No completar</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
 
     <div class="form-consent field" data-field="consent">
       <label class="checkbox" for="consent">
@@ -348,15 +352,19 @@
 
     <div class="form-note">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
-      <p>El canal de contacto directo todavía no está habilitado. Podés preparar tu consulta y copiarla; no se envió ningún mensaje.</p>
+      <p>La consulta se envía por correo a ALMATE. Si preferís una respuesta inmediata, también podés escribirnos por WhatsApp.</p>
     </div>
 
     <div class="contact-form__actions">
       <button class="btn btn--primary btn--large" type="submit" data-submit>
-        <span class="btn__label">Preparar consulta</span>
+        <span class="btn__label">Enviar consulta</span>
         <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
       </button>
-      <button class="btn btn--secondary btn--large" type="button" data-copy-message>
+      <button class="btn btn--secondary btn--large" type="button" data-whatsapp-submit>
+              <span class="btn__label">Enviar por WhatsApp</span>
+              <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/><path d="M8.5 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.2.2-.2.3 0 .6.7 1.1 1.6 1.9 2.8 2.5.3.1.5.1.7-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5 0 .3-.2 1-.8 1.4-.5.4-1.2.6-2 .4-1.3-.3-2.8-1-4.1-2.3-1.2-1.2-2-2.6-2.3-3.8-.2-.8 0-1.5.3-2Z"/></svg></span>
+            </button>
+      <button class="btn btn--ghost btn--large" type="button" data-copy-message>
         <span class="btn__label">Copiar consulta</span>
         <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></span>
       </button>
@@ -368,16 +376,13 @@
           <aside class="contact-layout__aside" aria-label="Información de contacto">
             <div class="contact-panel">
               <h2 class="contact-panel__title">Canales</h2>
-              <div class="contact-channels contact-channels--pending">
-      <span class="contact-channels__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg></span>
-      <div>
-        <h3>Canales directos pendientes</h3>
-        <p>El correo y el WhatsApp comercial todavía no están configurados en este sitio. El formulario permite preparar la consulta y copiarla.</p>
-      </div>
-    </div>
+              <div class="contact-channels">
+    <a class="contact-channel" href="https://wa.me/5491134761743?text=Hola%20ALMATE.%20Quiero%20contarles%20sobre%20un%20proyecto%20digital%20y%20conocer%20c%C3%B3mo%20pueden%20ayudarme." target="_blank" rel="noopener noreferrer"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/><path d="M8.5 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.2.2-.2.3 0 .6.7 1.1 1.6 1.9 2.8 2.5.3.1.5.1.7-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5 0 .3-.2 1-.8 1.4-.5.4-1.2.6-2 .4-1.3-.3-2.8-1-4.1-2.3-1.2-1.2-2-2.6-2.3-3.8-.2-.8 0-1.5.3-2Z"/></svg></span><div><strong>WhatsApp</strong><small>Escribinos directamente</small></div><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+    <a class="contact-channel" href="mailto:almate.digitalstudio@gmail.com?subject=Consulta%20desde%20el%20sitio%20de%20ALMATE"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><div><strong>almate.digitalstudio@gmail.com</strong><small>Correo comercial</small></div><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+  </div>
               <div class="contact-panel__note">
                 <span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-                <p>Respondemos por el mismo canal que elijas para la consulta.</p>
+                <p>Respondemos por el correo o el WhatsApp que nos indiques.</p>
               </div>
             </div>
 
@@ -491,13 +496,13 @@
     <div class="container footer__inner">
       <div class="footer__brand">
         <a class="brand brand--footer" href="/" aria-label="ALMATE · Digital Studio — Inicio">
-      <img class="brand__image" src="/logo_almate.png" width="620" height="165" alt="ALMATE · Digital Studio" decoding="async" loading="lazy">
+      <img class="brand__image brand__image--invert" src="/logo_almate.png" width="620" height="165" alt="ALMATE · Digital Studio" decoding="async" loading="lazy">
     </a>
         <h2 class="footer__title" id="footer-title">Ideas que evolucionan. Soluciones que transforman.</h2>
         <p class="footer__description">Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.</p>
         <div class="footer__status">
           <span class="footer__status-dot" aria-hidden="true"></span>
-          <span>Digital Studio · Ecosistema en evolución</span>
+          <span>Digital Studio · Soluciones digitales</span>
         </div>
       </div>
 
@@ -519,9 +524,9 @@
         </div>
         <div class="footer__column">
           <h3 class="footer__heading">Contacto</h3>
-          <p class="footer__pending">Canales directos pendientes de configuración. Usá la página de contacto.</p>
+          <ul class="footer__links footer__links--contact"><li><a href="https://wa.me/5491134761743?text=Hola%20ALMATE.%20Quiero%20contarles%20sobre%20un%20proyecto%20digital%20y%20conocer%20c%C3%B3mo%20pueden%20ayudarme." target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/><path d="M8.5 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.2.2-.2.3 0 .6.7 1.1 1.6 1.9 2.8 2.5.3.1.5.1.7-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5 0 .3-.2 1-.8 1.4-.5.4-1.2.6-2 .4-1.3-.3-2.8-1-4.1-2.3-1.2-1.2-2-2.6-2.3-3.8-.2-.8 0-1.5.3-2Z"/></svg><span>WhatsApp</span></a></li><li><a href="mailto:almate.digitalstudio@gmail.com?subject=Consulta%20desde%20el%20sitio%20de%20ALMATE"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>almate.digitalstudio@gmail.com</span></a></li></ul>
           <a class="footer__contact-cta" href="/contacto/">Hablemos de tu proyecto <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
-          
+          <div class="footer__social"><a class="footer__social-link" href="https://www.instagram.com/almate.digitalstudio/" target="_blank" rel="noopener noreferrer">Instagram</a></div>
         </div>
       </div>
 

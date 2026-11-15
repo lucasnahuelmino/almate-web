@@ -4,6 +4,8 @@
  * y una llamada a la acción. No se publican precios ni plazos.
  */
 
+import { productFamilies } from './products.js';
+
 export const serviceCategories = [
   {
     id: 'desarrollo-web',
@@ -364,13 +366,23 @@ export function getCategoryById(id) {
 }
 
 export function getContactSolutionOptions() {
-  return serviceCategories.map((category) => ({
+  const groups = serviceCategories.map((category) => ({
     label: category.name,
     options: category.services.map((service) => ({
       value: service.id,
       label: service.name,
     })),
   }));
+
+  groups.push({
+    label: 'Líneas de solución ALMATE',
+    options: productFamilies.map((family) => ({
+      value: family.id,
+      label: family.name,
+    })),
+  });
+
+  return groups;
 }
 
 export function contactHrefForService(serviceId) {

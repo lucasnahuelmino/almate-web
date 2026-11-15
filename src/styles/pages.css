@@ -1608,7 +1608,7 @@
   color: var(--color-cyan);
 }
 
-.status-guide {
+.commercial-intro {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: clamp(2rem, 6vw, 6rem);
@@ -1618,24 +1618,24 @@
   background: rgba(16, 28, 48, 0.46);
 }
 
-.status-guide__intro h2 {
+.commercial-intro__intro h2 {
   margin-bottom: 9px;
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   letter-spacing: -0.04em;
 }
 
-.status-guide__intro p {
+.commercial-intro__intro p {
   color: var(--color-muted);
   font-size: 0.84rem;
   line-height: 1.65;
 }
 
-.status-guide__list {
+.commercial-intro__list {
   display: grid;
   gap: 12px;
 }
 
-.status-guide__list li {
+.commercial-intro__list li {
   display: grid;
   grid-template-columns: 110px 1fr;
   gap: 12px;
@@ -1644,12 +1644,12 @@
   border-bottom: 1px solid var(--color-border-soft);
 }
 
-.status-guide__list li:last-child {
+.commercial-intro__list li:last-child {
   border-bottom: 0;
   padding-bottom: 0;
 }
 
-.status-guide__list p {
+.commercial-intro__list p {
   color: var(--color-muted-2);
   font-size: 0.75rem;
   line-height: 1.5;
@@ -1949,19 +1949,27 @@
   font-size: 0.66rem;
 }
 
-.nexo-hero-card__status {
+.nexo-hero-card__list {
   display: grid;
   gap: 7px;
   padding-top: 12px;
   border-top: 1px solid var(--color-border-soft);
 }
 
-.nexo-hero-card__status > div {
+.nexo-hero-card__list > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   font-size: 0.75rem;
+}
+
+.nexo-hero-card__list small {
+  color: var(--color-muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .nexo-hero-card__note {
@@ -2092,6 +2100,17 @@
 .nexo-module__icon .icon {
   width: 18px;
   height: 18px;
+}
+
+.nexo-module__tag {
+  padding: 3px 8px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 999px;
+  color: var(--color-muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .nexo-module__title {
@@ -3522,7 +3541,7 @@
   .technology-panel,
   .contact-layout,
   .faq-layout,
-  .status-guide,
+  .commercial-intro,
   .criteria-panel,
   .compare-panel,
   .grow-panel,

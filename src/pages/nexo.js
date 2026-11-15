@@ -1,45 +1,108 @@
 import { CTASection } from '../components/CTASection.js';
 import { PageHero } from '../components/PageHero.js';
 import { SectionHeading } from '../components/SectionHeading.js';
-import { StatusBadge } from '../components/StatusBadge.js';
-import { getProductById, getProductStatus } from '../data/products.js';
-import { site } from '../config/site.config.js';
+import { getFamilyById } from '../data/products.js';
 import { icon } from '../lib/icons.js';
 import { escapeHtml } from '../lib/html.js';
-import { absoluteUrl, route } from '../lib/paths.js';
-import { breadcrumbSchema, organizationSchema, siteNodeId } from '../lib/seo.js';
+import { route } from '../lib/paths.js';
+import { breadcrumbSchema, collectionSchema, organizationSchema } from '../lib/seo.js';
 
-const stock = getProductById('nexo-stock');
-const gestion = getProductById('nexo-gestion');
+const nexo = getFamilyById('nexo');
 
-const aside = `<div class="nexo-hero-card" aria-label="Estado de ALMATE Nexo">
+const modules = [
+  {
+    id: 'control-stock',
+    icon: 'database',
+    title: 'Control de stock',
+    description:
+      'Una vista clara de existencias, movimientos y disponibilidad para saber qué hay, qué falta y qué se mueve.',
+    features: ['Altas y ajustes', 'Movimientos', 'Alertas de reposición'],
+  },
+  {
+    id: 'inventario',
+    icon: 'layers',
+    title: 'Inventario',
+    description:
+      'Organización de productos por categorías, ubicaciones y criterios de conteo, con información consistente para la operación.',
+    features: ['Conteos', 'Categorías', 'Historial'],
+  },
+  {
+    id: 'ventas',
+    icon: 'cart',
+    title: 'Ventas',
+    description:
+      'Registro de ventas y comprobantes conectado con el stock y los productos, para evitar cargas duplicadas.',
+    features: ['Registro de ventas', 'Comprobantes', 'Estados'],
+  },
+  {
+    id: 'productos',
+    icon: 'grid',
+    title: 'Productos',
+    description:
+      'Datos centralizados de cada producto: identificación, categoría, unidad, proveedor y atributos necesarios para operar.',
+    features: ['Fichas', 'Categorías', 'Proveedores'],
+  },
+  {
+    id: 'precios',
+    icon: 'gauge',
+    title: 'Precios y listas',
+    description:
+      'Listas de precios y actualizaciones controladas para que la información comercial sea consistente en todos los canales.',
+    features: ['Listas', 'Actualizaciones', 'Vigencia'],
+  },
+  {
+    id: 'reportes',
+    icon: 'monitor',
+    title: 'Reportes',
+    description:
+      'Indicadores de ventas, movimientos y stock para leer la operación con datos concretos y tomar decisiones.',
+    features: ['Ventas', 'Movimientos', 'Exportación'],
+  },
+  {
+    id: 'administracion',
+    icon: 'users',
+    title: 'Administración',
+    description:
+      'Usuarios, permisos y responsabilidades para que cada persona acceda a lo que necesita según su rol.',
+    features: ['Roles', 'Permisos', 'Trazabilidad'],
+  },
+  {
+    id: 'integracion',
+    icon: 'workflow',
+    title: 'Integración de procesos',
+    description:
+      'Conexión entre las herramientas que ya usa el negocio y los módulos de gestión, para reducir tareas manuales.',
+    features: ['Datos compartidos', 'Automatizaciones', 'Canales externos'],
+  },
+];
+
+const aside = `<div class="nexo-hero-card" aria-label="Soluciones de ALMATE Nexo">
   <div class="nexo-hero-card__head">
     <span class="nexo-hero-card__logo">N</span>
-    <span><strong>ALMATE Nexo</strong><small>Gestión integrada</small></span>
+    <span><strong>ALMATE Nexo</strong><small>Soluciones de gestión</small></span>
   </div>
-  <div class="nexo-hero-card__status">
-    <div><span>Nexo Stock</span>${StatusBadge({ status: getProductStatus(stock.status) })}</div>
-    <div><span>Nexo Gestión</span>${StatusBadge({ status: getProductStatus(gestion.status) })}</div>
+  <div class="nexo-hero-card__list">
+    <div><span>Stock e inventario</span><small>según alcance</small></div>
+    <div><span>Ventas y productos</span><small>según alcance</small></div>
+    <div><span>Precios y reportes</span><small>según alcance</small></div>
+    <div><span>Administración</span><small>según alcance</small></div>
   </div>
-  <p class="nexo-hero-card__note">${icon('info')} Producto en desarrollo. Sin demo pública por el momento.</p>
+  <p class="nexo-hero-card__note">${icon('info')} Cada implementación se define con el negocio y su operación.</p>
 </div>`;
 
-function moduleCard(product) {
-  const status = getProductStatus(product.status);
-  const isAvailable = product.status === 'disponible';
-  return `<article class="nexo-module ${product.status === 'proximamente' ? 'nexo-module--upcoming' : ''}" data-reveal>
+function moduleCard(module) {
+  return `<article class="nexo-module" id="${escapeHtml(module.id)}" data-reveal>
     <div class="nexo-module__head">
-      <span class="nexo-module__icon" aria-hidden="true">${icon(product.id === 'nexo-stock' ? 'database' : 'layers')}</span>
-      ${StatusBadge({ status })}
+      <span class="nexo-module__icon" aria-hidden="true">${icon(module.icon)}</span>
+      <span class="nexo-module__tag">Solución</span>
     </div>
-    <h3 class="nexo-module__title">${escapeHtml(product.name)}</h3>
-    <p class="nexo-module__description">${escapeHtml(product.description)}</p>
+    <h3 class="nexo-module__title">${escapeHtml(module.title)}</h3>
+    <p class="nexo-module__description">${escapeHtml(module.description)}</p>
     <ul class="nexo-module__features">
-      ${product.features.map((feature) => `<li>${icon('check')}<span>${escapeHtml(feature)}</span></li>`).join('')}
+      ${module.features.map((feature) => `<li>${icon('check')}<span>${escapeHtml(feature)}</span></li>`).join('')}
     </ul>
-    <p class="nexo-module__note">${icon('info')} ${escapeHtml(status.description)}</p>
-    <a class="text-link" href="${route(`/contacto/?solucion=${product.id}`)}">
-      <span>${escapeHtml(isAvailable ? 'Conocer el producto' : product.cta)}</span>${icon('arrow-up-right')}
+    <a class="text-link" href="${route(`/contacto/?solucion=nexo`)}">
+      <span>Consultar esta solución</span>${icon('arrow-up-right')}
     </a>
   </article>`;
 }
@@ -53,12 +116,12 @@ export function NexoPage() {
         { label: 'ALMATE Nexo', href: '/productos/nexo/' },
       ],
       eyebrow: 'ALMATE Nexo',
-      title: 'Herramientas de gestión que <span class="text-gradient">se conectan</span>.',
+      title: 'Soluciones de gestión que <span class="text-gradient">conectan la operación</span>.',
       description:
-        'Nexo es la familia de productos de gestión integrada de ALMATE. Una arquitectura modular para conectar inventario, ventas, precios y administración en una misma lógica.',
+        'Nexo reúne soluciones para ordenar stock, inventario, ventas, productos, precios, reportes y administración. Cada módulo se implementa según el alcance contratado y los procesos del negocio.',
       actions: [
-        { label: 'Hablemos de tu operación', href: route('/contacto/'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
-        { label: 'Volver a productos', href: route('/productos/'), variant: 'secondary', iconName: 'arrow-left', size: 'large' },
+        { label: 'Hablemos de tu operación', href: route('/contacto/?solucion=nexo'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
+        { label: 'Volver a soluciones', href: route('/productos/'), variant: 'secondary', iconName: 'arrow-left', size: 'large' },
       ],
       aside,
       className: 'page-hero--nexo',
@@ -69,14 +132,14 @@ export function NexoPage() {
         <div class="nexo-vision">
           <div class="nexo-vision__intro">
             ${SectionHeading({
-              eyebrow: 'La visión',
+              eyebrow: 'El enfoque',
               index: '01',
               title: 'Un mismo lugar para entender el negocio.',
               intro:
-                'La operación de un comercio no debería depender de saltar entre planillas, mensajes y sistemas que no se hablan. Nexo nace para ordenar esa información y darle continuidad.',
+                'La operación de un comercio no debería depender de saltar entre planillas, mensajes y sistemas que no se hablan. Nexo ordena esa información y le da continuidad.',
               id: 'nexo-vision-title',
             })}
-            <p class="nexo-vision__note">${icon('info')} Estamos construyendo esta visión por etapas. Los módulos se presentan con su estado real.</p>
+            <p class="nexo-vision__note">${icon('info')} El alcance de cada módulo se define en la propuesta: no todos los negocios necesitan lo mismo ni en el mismo orden.</p>
           </div>
           <div class="nexo-principles">
             <div class="nexo-principle" data-reveal>
@@ -92,7 +155,7 @@ export function NexoPage() {
             <div class="nexo-principle" data-reveal>
               <span>${icon('refresh')}</span>
               <h3>Evolutivo</h3>
-              <p>El producto crece por etapas, priorizando problemas reales de la operación.</p>
+              <p>La implementación crece por etapas, priorizando problemas reales de la operación.</p>
             </div>
           </div>
         </div>
@@ -105,29 +168,14 @@ export function NexoPage() {
           ${SectionHeading({
             eyebrow: 'Módulos',
             index: '02',
-            title: 'El mapa de Nexo hoy.',
+            title: 'Las áreas que puede cubrir Nexo.',
             intro:
-              'Dos módulos forman parte del mapa inicial. Ninguno se presenta como una funcionalidad disponible si todavía no lo está.',
+              'Cada módulo resuelve una parte de la operación y puede combinarse con los demás. La implementación concreta se acuerda según las necesidades y el alcance contratado.',
             id: 'nexo-modules-title',
           })}
         </div>
         <div class="nexo-modules">
-          ${moduleCard(stock)}
-          ${moduleCard(gestion)}
-          <div class="nexo-module nexo-module--future" data-reveal aria-label="Módulos futuros">
-            <div class="nexo-module__head">
-              <span class="nexo-module__icon" aria-hidden="true">${icon('plus')}</span>
-              <span class="status status--neutral"><span class="status__dot" aria-hidden="true"></span><span>Por definir</span></span>
-            </div>
-            <h3 class="nexo-module__title">Próximos módulos</h3>
-            <p class="nexo-module__description">
-              La arquitectura permite incorporar nuevas capacidades cuando respondan a una necesidad concreta y validada. No anunciamos módulos sin fecha ni alcance definido.
-            </p>
-            <ul class="nexo-module__features nexo-module__features--ghost">
-              <li>${icon('minus')}<span>Sin nombres ni fechas inventadas</span></li>
-              <li>${icon('minus')}<span>Se incorporan por etapas</span></li>
-            </ul>
-          </div>
+          ${modules.map((module) => moduleCard(module)).join('')}
         </div>
       </div>
     </section>
@@ -137,25 +185,26 @@ export function NexoPage() {
         <div class="architecture-panel" data-reveal>
           <div class="architecture-panel__content">
             ${SectionHeading({
-              eyebrow: 'Arquitectura',
+              eyebrow: 'Alcance contratado',
               index: '03',
-              title: 'Un núcleo, varios módulos.',
+              title: 'Funcionalidades definidas con el negocio.',
               intro:
-                'La dirección técnica de Nexo prioriza una base ordenada: datos centralizados, módulos con responsabilidades claras y posibilidad de integrar nuevas piezas.',
+                'No todas las implementaciones incluyen lo mismo. Estas son las definiciones que se acuerdan antes de empezar:',
               id: 'nexo-architecture-title',
             })}
             <ul class="architecture-list">
-              <li>${icon('database')}<span><strong>Datos centralizados</strong><small>Una fuente común para la información de la operación.</small></span></li>
-              <li>${icon('shield')}<span><strong>Accesos y responsabilidades</strong><small>Roles definidos para cada parte del sistema.</small></span></li>
-              <li>${icon('workflow')}<span><strong>Módulos conectados</strong><small>Piezas que comparten datos y procesos.</small></span></li>
+              <li>${icon('target')}<span><strong>Procesos incluidos</strong><small>Qué áreas se gestionan y cómo se relacionan.</small></span></li>
+              <li>${icon('database')}<span><strong>Datos y migración</strong><small>Qué información existe y cómo se incorpora.</small></span></li>
+              <li>${icon('users')}<span><strong>Usuarios y permisos</strong><small>Quién accede a cada parte de la operación.</small></span></li>
+              <li>${icon('workflow')}<span><strong>Integraciones</strong><small>Qué herramientas y canales se conectan.</small></span></li>
             </ul>
           </div>
           <div class="architecture-diagram" aria-hidden="true">
             <span class="architecture-diagram__ring"></span>
-            <div class="architecture-core"><span>N</span><strong>Nexo</strong><small>núcleo</small></div>
+            <div class="architecture-core"><span>N</span><strong>Nexo</strong><small>gestión</small></div>
             <div class="architecture-node architecture-node--stock">${icon('database')}<span>Stock</span></div>
-            <div class="architecture-node architecture-node--gestion">${icon('layers')}<span>Gestión</span></div>
-            <div class="architecture-node architecture-node--future">${icon('plus')}<span>Futuro</span></div>
+            <div class="architecture-node architecture-node--gestion">${icon('layers')}<span>Ventas</span></div>
+            <div class="architecture-node architecture-node--future">${icon('monitor')}<span>Reportes</span></div>
             <span class="architecture-line architecture-line--one"></span>
             <span class="architecture-line architecture-line--two"></span>
             <span class="architecture-line architecture-line--three"></span>
@@ -164,17 +213,14 @@ export function NexoPage() {
       </div>
     </section>
 
-    <section class="section section--nexo-truth" aria-labelledby="nexo-truth-title">
+    <section class="section section--nexo-truth" aria-labelledby="nexo-scope-title">
       <div class="container">
         <div class="truth-panel" data-reveal>
-          <span class="truth-panel__icon" aria-hidden="true">${icon('info')}</span>
+          <span class="truth-panel__icon" aria-hidden="true">${icon('shield')}</span>
           <div>
-            <h2 id="nexo-truth-title">Qué está disponible hoy</h2>
-            <div class="truth-panel__grid">
-              <div><span>Nexo Stock</span><strong>En desarrollo</strong><p>Prototipo funcional en el ecosistema local. No tiene demo pública publicada.</p></div>
-              <div><span>Nexo Gestión</span><strong>Próximamente</strong><p>Módulo planificado. No está disponible y no tiene fecha pública de lanzamiento.</p></div>
-            </div>
-            <p class="truth-panel__note">Si querés conocer el estado actual o conversar sobre una necesidad de gestión, escribinos. No prometemos fechas que todavía no existen.</p>
+            <h2 id="nexo-scope-title">Una propuesta a medida, sin promesas vacías.</h2>
+            <p>${escapeHtml(nexo.description)}</p>
+            <p class="truth-panel__note">Si querés conversar sobre una necesidad de gestión, escribinos. Definimos el alcance, las etapas y los tiempos en la propuesta.</p>
           </div>
         </div>
       </div>
@@ -186,13 +232,13 @@ export function NexoPage() {
       description:
         'Contanos qué gestionás hoy, qué información se te escapa y qué te gustaría simplificar. Ese es el punto de partida.',
       primary: {
-        label: 'Hablemos de tu operación',
-        href: route('/contacto/'),
+        label: 'Consultar una solución',
+        href: route('/contacto/?solucion=nexo'),
         variant: 'primary',
         iconName: 'arrow-up-right',
       },
       secondary: {
-        label: 'Ver todo el ecosistema',
+        label: 'Ver todas las soluciones',
         href: route('/productos/'),
         variant: 'secondary',
         iconName: 'grid',
@@ -201,23 +247,11 @@ export function NexoPage() {
     })}
   `;
 
-  const softwareSchema = [stock, gestion].map((product) => ({
-    '@type': 'SoftwareApplication',
-    name: product.name,
-    description: product.description,
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web',
-    inLanguage: site.language,
-    url: absoluteUrl(`/productos/nexo/#${product.id}`, site.url),
-    isPartOf: { '@id': siteNodeId('sitio') },
-    brand: { '@id': siteNodeId('organizacion') },
-  }));
-
   return {
     path: '/productos/nexo/',
     title: 'ALMATE Nexo',
     description:
-      'ALMATE Nexo: la familia de gestión integrada de ALMATE. Conocé Nexo Stock y Nexo Gestión, sus estados reales y la visión modular del producto.',
+      'ALMATE Nexo: soluciones de gestión para stock, inventario, ventas, productos, precios, reportes y administración. Alcance adaptable a cada negocio.',
     body,
     schema: [
       breadcrumbSchema([
@@ -226,7 +260,17 @@ export function NexoPage() {
         { label: 'ALMATE Nexo', href: '/productos/nexo/' },
       ]),
       organizationSchema(),
-      ...softwareSchema,
+      collectionSchema({
+        name: 'Soluciones ALMATE Nexo',
+        description:
+          'Módulos de gestión que ALMATE implementa según el alcance contratado.',
+        path: '/productos/nexo/',
+        items: modules.map((module) => ({
+          name: module.title,
+          description: module.description,
+          href: `/productos/nexo/#${module.id}`,
+        })),
+      }),
     ],
   };
 }

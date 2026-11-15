@@ -1,12 +1,11 @@
 import { icon } from '../lib/icons.js';
 import { escapeAttr, escapeHtml } from '../lib/html.js';
 import { asset, route } from '../lib/paths.js';
-import { StatusBadge } from './StatusBadge.js';
 
-function ProductVisual({ product, family }) {
-  if (product.image) {
+function ProductVisual({ family }) {
+  if (family.image) {
     return `<div class="product-card__media">
-      <img src="${escapeAttr(asset(product.image))}" alt="${escapeAttr(product.imageAlt || product.name)}" width="${product.imageWidth || 1200}" height="${product.imageHeight || 750}" loading="lazy" decoding="async">
+      <img src="${escapeAttr(asset(family.image))}" alt="${escapeAttr(family.imageAlt || family.name)}" width="${family.imageWidth || 1200}" height="${family.imageHeight || 750}" loading="lazy" decoding="async">
     </div>`;
   }
 
@@ -22,43 +21,51 @@ function ProductVisual({ product, family }) {
       </div>
       <div class="product-visual__main">
         <div class="product-visual__heading">
-          <span class="product-visual__label">${escapeHtml(product.visualLabel || product.name)}</span>
-          <span class="product-visual__chip">${escapeHtml(product.statusLabel || 'Vista conceptual')}</span>
+          <span class="product-visual__label">${escapeHtml(family.visualLabel || family.name)}</span>
+          <span class="product-visual__chip">Solución</span>
         </div>
         <div class="product-visual__bars"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="product-visual__rows"><span></span><span></span><span></span></div>
       </div>
     </div>
-    <span class="product-visual__corner">${escapeHtml(product.code || 'ALMATE')}</span>
+    <span class="product-visual__corner">${escapeHtml(family.code || 'ALMATE')}</span>
   </div>`;
 }
 
-export function ProductCard({ product, family, status }) {
-  const internalHref = route(`/contacto/?solucion=${encodeURIComponent(product.id)}`);
-  const hasExternalUrl = Boolean(product.url);
-  const href = hasExternalUrl ? product.url : internalHref;
-  const cta = hasExternalUrl ? product.cta || 'Ver producto' : 'Consultar por este producto';
+export function ProductCard({ family }) {
+  const href = route(`/contacto/?solucion=${encodeURIComponent(family.id)}`);
+  const cta = family.cta || 'Consultar solución';
 
-  return `<article class="product-card theme-${escapeAttr(family.theme)}" id="${escapeAttr(product.id)}" data-reveal>
-    <a class="product-card__media-link" href="${escapeAttr(href)}"${hasExternalUrl ? ' target="_blank" rel="noopener noreferrer"' : ''} aria-label="${escapeAttr(`Ver ${product.name}`)}">
-      ${ProductVisual({ product, family })}
+  return `<article class="product-card theme-${escapeAttr(family.theme)}" data-reveal>
+    <a class="product-card__media-link" href="${escapeAttr(href)}" aria-label="${escapeAttr(`${cta}: ${family.name}`)}">
+      ${ProductVisual({ family })}
     </a>
     <div class="product-card__body">
       <div class="product-card__meta">
-        <span class="product-card__family">${escapeHtml(family.name)}</span>
-        ${StatusBadge({ status })}
+        <span class="product-card__family">${escapeHtml(family.audience)}</span>
       </div>
       <h3 class="product-card__title">
-        <a href="${escapeAttr(href)}"${hasExternalUrl ? ' target="_blank" rel="noopener noreferrer"' : ''}>${escapeHtml(product.name)}</a>
+        <a href="${escapeAttr(href)}">${escapeHtml(family.name)}</a>
       </h3>
-      <p class="product-card__description">${escapeHtml(product.description)}</p>
-      <ul class="product-card__features" aria-label="Enfoque de ${escapeAttr(product.name)}">
-        ${product.features.map((feature) => `<li>${icon('check')}<span>${escapeHtml(feature)}</span></li>`).join('')}
-      </ul>
-      ${product.note ? `<p class="product-card__note">${icon('info')}<span>${escapeHtml(product.note)}</span></p>` : ''}
-      <a class="text-link" href="${escapeAttr(href)}"${hasExternalUrl ? ' target="_blank" rel="noopener noreferrer"' : ''}>
+      <p class="product-card__description">${escapeHtml(family.description)}</p>
+
+      <div class="product-card__block">
+        <span class="product-card__block-label">Beneficios</span>
+        <ul class="product-card__features" aria-label="Beneficios de ${escapeAttr(family.name)}">
+          ${family.benefits.map((benefit) => `<li>${icon('check')}<span>${escapeHtml(benefit)}</span></li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="product-card__block">
+        <span class="product-card__block-label">Alcance posible</span>
+        <ul class="product-card__scope" aria-label="Alcance de ${escapeAttr(family.name)}">
+          ${family.scope.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+        </ul>
+      </div>
+
+      <a class="text-link" href="${escapeAttr(href)}">
         <span>${escapeHtml(cta)}</span>
-        ${icon(hasExternalUrl ? 'external' : 'arrow-up-right')}
+        ${icon('arrow-up-right')}
       </a>
     </div>
   </article>`;

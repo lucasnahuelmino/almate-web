@@ -86,8 +86,8 @@ export function ContactoPage() {
           <div class="contact-layout__form">
             <div class="contact-form-heading">
               <p class="eyebrow"><span class="eyebrow__index">01</span><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Formulario</span></p>
-              <h2 id="contact-form-title">Prepará tu consulta.</h2>
-              <p>Completá los campos y elegí el canal. No se envía información a un servidor de ALMATE en esta etapa: tu consulta se abre en WhatsApp o en tu cliente de correo.</p>
+              <h2 id="contact-form-title">Enviá tu consulta.</h2>
+              <p>Completá los campos y enviá la consulta por correo. Si preferís una respuesta inmediata, también podés enviarla por WhatsApp o copiarla.</p>
             </div>
             ${ContactForm()}
           </div>

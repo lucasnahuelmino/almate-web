@@ -343,14 +343,74 @@ async function main() {
     pass(`Assets: CSS ${(css / 1024).toFixed(1)} kB · JS ${(js / 1024).toFixed(1)} kB`);
   }
 
-  // Las URLs comerciales inventadas no deben existir mientras no haya config.
+  // Canales comerciales configurados.
   if (htmlByPage.size) {
     const joined = [...htmlByPage.values()].join('\n');
-    if (/wa\.me\/\d/.test(joined)) fail('Se detectó un WhatsApp no configurado');
-    if (/mailto:[^"]+@/.test(joined)) fail('Se detectó un correo no configurado');
+
+    if (!joined.includes('https://wa.me/5491134761743')) {
+      fail('No se encontró el WhatsApp comercial configurado (5491134761743)');
+    } else {
+      pass('WhatsApp comercial presente en el HTML generado');
+    }
+
+    if (!joined.includes('almate.digitalstudio@gmail.com')) {
+      fail('No se encontró el correo comercial configurado');
+    } else {
+      pass('Correo comercial presente en el HTML generado');
+    }
+
+    for (const placeholder of ['wa.me/000', 'wa.me/123456', 'tu@email.com', 'correo@ejemplo.com']) {
+      if (joined.toLowerCase().includes(placeholder.toLowerCase())) {
+        fail(`Se detectó un dato de contacto de ejemplo (${placeholder})`);
+      }
+    }
+
+    const waLinks = [...joined.matchAll(/https:\/\/wa\.me\/(\d+)\?text=([^"&]+)/g)];
+    if (!waLinks.length) {
+      fail('Los enlaces de WhatsApp no incluyen mensaje codificado');
+    } else {
+      pass(`${waLinks.length} enlaces de WhatsApp con mensaje contextual`);
+    }
+
     if (/target="_blank"[^>]+href="https?:\/\//.test(joined)) {
       warn('Hay enlaces externos: revisá que correspondan a URLs reales.');
     }
+  }
+
+  // Productos y Nexo no deben volver a mostrar estados, roadmap ni badges.
+  const forbiddenCommercial = [
+    'Próximamente',
+    'En desarrollo',
+    'Qué está disponible hoy',
+    'Mapa del ecosistema',
+    'Guía de estados',
+    'Roadmap',
+    'roadmap',
+  ];
+
+  for (const file of ['productos/index.html', 'productos/nexo/index.html']) {
+    const html = htmlByPage.get(file);
+    if (!html) continue;
+    for (const term of forbiddenCommercial) {
+      if (html.includes(term)) {
+        fail(`${file}: contiene un término retirado del enfoque comercial (${term})`);
+      }
+    }
+    if (/class="status\b/.test(html)) {
+      fail(`${file}: todavía contiene badges de estado`);
+    }
+  }
+  if (htmlByPage.size) pass('Productos y Nexo sin estados ni roadmap');
+
+  // La función serverless y la configuración de despliegue viven fuera de dist.
+  if (!existsSync(join(root, 'api', 'contact.js'))) {
+    fail('Falta api/contact.js (función de contacto para Vercel)');
+  } else {
+    pass('Función serverless api/contact.js presente');
+  }
+
+  if (!existsSync(join(root, 'vercel.json'))) {
+    warn('Falta vercel.json (configuración de despliegue)');
   }
 
   console.log('\nALMATE · verificación del sitio');

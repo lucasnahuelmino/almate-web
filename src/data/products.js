@@ -1,30 +1,10 @@
 /**
- * Catálogo del ecosistema ALMATE.
- * Las familias son líneas conceptuales; los productos son las herramientas
- * concretas y tienen un estado propio. No se declara disponible nada que
- * todavía no tenga una versión publicada y verificable.
+ * Líneas comerciales de ALMATE.
+ * ---------------------------------------------------------------
+ * Cada familia es una solución que ALMATE puede desarrollar, configurar y
+ * adaptar a un cliente. No se describen etapas internas, roadmap ni fechas:
+ * el alcance final se define en cada proyecto.
  */
-
-export const productStatuses = {
-  disponible: {
-    key: 'disponible',
-    label: 'Disponible',
-    tone: 'success',
-    description: 'Producto publicado y disponible para consultar.',
-  },
-  desarrollo: {
-    key: 'desarrollo',
-    label: 'En desarrollo',
-    tone: 'warning',
-    description: 'Producto en construcción o en etapa de prototipo. Todavía no tiene publicación pública.',
-  },
-  proximamente: {
-    key: 'proximamente',
-    label: 'Próximamente',
-    tone: 'neutral',
-    description: 'Línea planificada. No está disponible ni tiene fecha de lanzamiento pública.',
-  },
-};
 
 export const productFamilies = [
   {
@@ -33,28 +13,28 @@ export const productFamilies = [
     shortName: 'Comercial',
     icon: 'store',
     theme: 'blue',
-    audience: 'Comercios y locales',
-    tagline: 'Presencia digital y operación comercial.',
+    audience: 'Comercios, locales y negocios de barrio',
+    tagline: 'Presencia digital y operación comercial ordenada.',
     description:
-      'Una familia pensada para comercios que necesitan mostrar lo que ofrecen, ordenar sus canales de contacto y preparar su operación para crecer.',
-    flagship: 'sitio-comercial',
-    products: [
-      {
-        id: 'sitio-comercial',
-        name: 'Sitio comercial',
-        category: 'ALMATE Comercial',
-        description:
-          'Una base para presentar el negocio, ordenar el catálogo y recibir consultas desde un único lugar.',
-        image: null,
-        features: ['Catálogo por categorías', 'Consulta directa', 'Contenido administrable'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Consultar por esta línea',
-        visualLabel: 'Sitio comercial',
-        code: 'COM / 01',
-        statusLabel: 'Vista conceptual',
-      },
+      'Una solución para mostrar el negocio, organizar el catálogo y concentrar las consultas en un espacio propio. Se adapta al rubro, al volumen de productos y a la forma de atención de cada comercio.',
+    benefits: [
+      'Una presencia profesional que representa la calidad del local.',
+      'Un catálogo claro, ordenado por rubros y fácil de consultar.',
+      'Consultas centralizadas por WhatsApp, formulario o correo.',
+      'Contenido preparado para actualizar sin rehacer el sitio.',
     ],
+    scope: [
+      'Sitio comercial con páginas internas',
+      'Catálogo por categorías y fichas de producto',
+      'Botón de consulta por WhatsApp',
+      'Formulario de contacto y ubicación',
+      'SEO local y diseño adaptable a celulares',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de una solución comercial ALMATE',
+    code: 'COM / 01',
+    visualLabel: 'Comercial',
+    cta: 'Consultar solución',
   },
   {
     id: 'servicios',
@@ -62,28 +42,28 @@ export const productFamilies = [
     shortName: 'Servicios',
     icon: 'briefcase',
     theme: 'cyan',
-    audience: 'Profesionales y prestadores',
+    audience: 'Profesionales, consultores y prestadores',
     tagline: 'Un sitio propio para explicar y generar confianza.',
     description:
-      'Para profesionales que necesitan presentar su trabajo, ordenar sus servicios y abrir un canal de consulta claro.',
-    flagship: 'sitio-servicios',
-    products: [
-      {
-        id: 'sitio-servicios',
-        name: 'Sitio de servicios',
-        category: 'ALMATE Servicios',
-        description:
-          'Un espacio profesional para explicar qué hacés, cómo trabajás y cómo pueden contactarte.',
-        image: null,
-        features: ['Perfil profesional', 'Servicios', 'Consulta directa'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Consultar por esta línea',
-        visualLabel: 'Sitio de servicios',
-        code: 'SER / 01',
-        statusLabel: 'Vista conceptual',
-      },
+      'Para profesionales que necesitan presentar su trabajo, ordenar sus servicios y abrir un canal de consulta claro. La estructura prioriza la trayectoria, la propuesta y el contacto.',
+    benefits: [
+      'Una presentación profesional de los servicios y la experiencia.',
+      'Un recorrido claro desde la consulta hasta el contacto.',
+      'Espacio para trabajos, casos y credenciales verificables.',
+      'Base preparada para sumar contenidos y nuevas especialidades.',
     ],
+    scope: [
+      'Perfil profesional y presentación institucional',
+      'Páginas de servicios y áreas de práctica',
+      'Portfolio o casos de trabajo',
+      'Formulario, WhatsApp y agenda de contacto',
+      'SEO y diseño responsive',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de una solución para profesionales ALMATE',
+    code: 'SER / 01',
+    visualLabel: 'Servicios',
+    cta: 'Consultar solución',
   },
   {
     id: 'inmobiliaria',
@@ -91,28 +71,28 @@ export const productFamilies = [
     shortName: 'Inmobiliaria',
     icon: 'home',
     theme: 'emerald',
-    audience: 'Inmobiliarias y corredores',
-    tagline: 'Propiedades ordenadas y administración central.',
+    audience: 'Inmobiliarias, corredores y administradores',
+    tagline: 'Propiedades ordenadas y consultas mejor atendidas.',
     description:
-      'Una familia orientada a catálogos de propiedades con búsqueda, fichas claras y una base para administrar la información.',
-    flagship: 'almate-propiedades',
-    products: [
-      {
-        id: 'almate-propiedades',
-        name: 'ALMATE Propiedades',
-        category: 'ALMATE Inmobiliaria',
-        description:
-          'Catálogo de propiedades con filtros, fichas y una estructura preparada para administrar publicaciones.',
-        image: null,
-        features: ['Filtros de búsqueda', 'Fichas de propiedad', 'Administración de datos'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Consultar por esta línea',
-        visualLabel: 'ALMATE Propiedades',
-        code: 'INM / 01',
-        statusLabel: 'Vista conceptual',
-      },
+      'Una solución para publicar propiedades con búsqueda, filtros y fichas completas. La administración de datos y la integración con la operación se definen según el alcance contratado.',
+    benefits: [
+      'Un catálogo de propiedades fácil de recorrer y filtrar.',
+      'Fichas con información clave, galería y contacto directo.',
+      'Una base para administrar publicaciones y estados.',
+      'Integración con los canales de consulta del negocio.',
     ],
+    scope: [
+      'Catálogo inmobiliario con filtros',
+      'Fichas de propiedad y galería',
+      'Formularios de consulta por propiedad',
+      'Administración de publicaciones',
+      'Integración con WhatsApp y correo',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de una solución inmobiliaria ALMATE',
+    code: 'INM / 01',
+    visualLabel: 'Inmobiliaria',
+    cta: 'Consultar solución',
   },
   {
     id: 'creativa',
@@ -120,28 +100,28 @@ export const productFamilies = [
     shortName: 'Creativa',
     icon: 'palette',
     theme: 'violet',
-    audience: 'Estudios, artistas y marcas',
+    audience: 'Estudios, artistas, marcas y proyectos creativos',
     tagline: 'Portfolios con identidad y foco en el contenido.',
     description:
-      'Para estudios y proyectos creativos que necesitan un espacio donde la obra, el proceso y la identidad sean los protagonistas.',
-    flagship: 'portfolio-creativo',
-    products: [
-      {
-        id: 'portfolio-creativo',
-        name: 'Portfolio creativo',
-        category: 'ALMATE Creativa',
-        description:
-          'Un portfolio flexible para organizar proyectos, mostrar proceso y facilitar el contacto.',
-        image: null,
-        features: ['Grilla de proyectos', 'Fichas de caso', 'Contacto directo'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Consultar por esta línea',
-        visualLabel: 'Portfolio creativo',
-        code: 'CRE / 01',
-        statusLabel: 'Vista conceptual',
-      },
+      'Para estudios y proyectos creativos que necesitan un espacio donde la obra, el proceso y la identidad sean protagonistas. El diseño se define según el tipo de trabajo y el público.',
+    benefits: [
+      'Una dirección visual alineada con la identidad del proyecto.',
+      'Una grilla de trabajos preparada para crecer.',
+      'Fichas de proyecto con narrativa y contexto.',
+      'Un canal de contacto directo para nuevas oportunidades.',
     ],
+    scope: [
+      'Portfolio visual y grilla de proyectos',
+      'Fichas de caso y galería',
+      'Página de presentación del estudio',
+      'Contacto directo y enlaces a redes',
+      'Diseño responsive y optimización de imágenes',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de un portfolio creativo ALMATE',
+    code: 'CRE / 01',
+    visualLabel: 'Creativa',
+    cta: 'Consultar solución',
   },
   {
     id: 'nexo',
@@ -149,44 +129,28 @@ export const productFamilies = [
     shortName: 'Nexo',
     icon: 'network',
     theme: 'nexo',
-    audience: 'Comercios que necesitan gestionar',
-    tagline: 'Herramientas de gestión que se conectan.',
+    audience: 'Comercios y empresas que necesitan gestionar su operación',
+    tagline: 'Soluciones de gestión que conectan la operación.',
     description:
-      'La familia de productos de gestión integrada. Nexo nace para conectar inventario, ventas, precios y administración en una misma lógica.',
-    flagship: 'nexo-stock',
-    products: [
-      {
-        id: 'nexo-stock',
-        name: 'Nexo Stock',
-        category: 'ALMATE Nexo',
-        description:
-          'Producto de gestión de inventario y ventas, en desarrollo dentro del ecosistema ALMATE.',
-        image: null,
-        features: ['Inventario', 'Movimientos', 'Ventas', 'Reportes'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Conocer Nexo',
-        visualLabel: 'Nexo Stock',
-        code: 'NEX / 01',
-        statusLabel: 'Vista conceptual',
-      },
-      {
-        id: 'nexo-gestion',
-        name: 'Nexo Gestión',
-        category: 'ALMATE Nexo',
-        description:
-          'Módulo de administración planificado para completar la visión de gestión integrada de Nexo.',
-        image: null,
-        features: ['Administración', 'Precios', 'Reportes', 'Módulos conectados'],
-        status: 'proximamente',
-        url: null,
-        cta: 'Seguir la evolución de Nexo',
-        note: 'Módulo planificado. Todavía no está disponible y no tiene fecha pública de lanzamiento.',
-        visualLabel: 'Nexo Gestión',
-        code: 'NEX / 02',
-        statusLabel: 'Vista conceptual',
-      },
+      'Nexo reúne soluciones para ordenar stock, inventario, ventas, productos, precios, reportes y administración. Cada implementación se configura según el alcance contratado y los procesos del negocio.',
+    benefits: [
+      'Información centralizada para decidir con datos concretos.',
+      'Menos planillas separadas y menos tareas duplicadas.',
+      'Módulos que comparten una misma lógica de operación.',
+      'Una base preparada para sumar funciones por etapas.',
     ],
+    scope: [
+      'Control de stock e inventario',
+      'Ventas, productos y listas de precios',
+      'Reportes y administración',
+      'Usuarios y permisos según el equipo',
+      'Integración de procesos y herramientas',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de ALMATE Nexo, soluciones de gestión',
+    code: 'NEX / 01',
+    visualLabel: 'Nexo',
+    cta: 'Consultar solución',
   },
   {
     id: 'ecommerce',
@@ -194,66 +158,52 @@ export const productFamilies = [
     shortName: 'Ecommerce',
     icon: 'cart',
     theme: 'amber',
-    audience: 'Tiendas y marcas que venden online',
+    audience: 'Tiendas, marcas y negocios que venden online',
     tagline: 'Una experiencia de compra clara y ordenada.',
     description:
-      'Una familia para catálogos y tiendas que necesitan un recorrido de compra comprensible, desde el producto hasta la confirmación.',
-    flagship: 'tienda-online',
-    products: [
-      {
-        id: 'tienda-online',
-        name: 'Tienda online',
-        category: 'ALMATE Ecommerce',
-        description:
-          'Base de tienda con catálogo, carrito y un checkout preparado para definir integraciones.',
-        image: null,
-        features: ['Catálogo y variantes', 'Carrito', 'Checkout configurable'],
-        status: 'desarrollo',
-        url: null,
-        cta: 'Consultar por esta línea',
-        visualLabel: 'Tienda online',
-        code: 'ECO / 01',
-        statusLabel: 'Vista conceptual',
-      },
+      'Una solución para catálogos y tiendas que necesitan un recorrido de compra comprensible, desde el producto hasta la confirmación. Los medios de pago, envíos e integraciones se definen en cada proyecto.',
+    benefits: [
+      'Un catálogo preparado para productos, variantes y categorías.',
+      'Un recorrido de compra claro y adaptable a celulares.',
+      'Administración de productos, precios y disponibilidad.',
+      'Integración con los medios de pago y envío que se acuerden.',
     ],
+    scope: [
+      'Catálogo y fichas de producto',
+      'Carrito y checkout configurable',
+      'Medios de pago y envíos según el proyecto',
+      'Administración de productos y pedidos',
+      'Consultas por WhatsApp e integraciones',
+    ],
+    image: null,
+    imageAlt: 'Vista conceptual de una tienda online ALMATE',
+    code: 'ECO / 01',
+    visualLabel: 'Ecommerce',
+    cta: 'Consultar solución',
   },
 ];
 
-export const allProducts = productFamilies.flatMap((family) =>
-  family.products.map((product) => ({
-    ...product,
-    familyId: family.id,
-    familyName: family.name,
-    familyTheme: family.theme,
-    family,
-    statusDefinition: productStatuses[product.status],
-  })),
-);
+/** Compatibilidad con páginas y componentes que recorrían productos. */
+export const allProducts = productFamilies.map((family) => ({
+  id: family.id,
+  name: family.name,
+  description: family.description,
+  familyId: family.id,
+  familyName: family.name,
+  familyTheme: family.theme,
+  family,
+}));
 
 export function getFamilyById(id) {
   return productFamilies.find((family) => family.id === id) || null;
 }
 
+/** El formulario de contacto puede preseleccionar una línea por su id. */
 export function getProductById(id) {
-  return allProducts.find((product) => product.id === id) || null;
+  return getFamilyById(id);
 }
 
 export function getProductsByFamily(familyId) {
-  return allProducts.filter((product) => product.familyId === familyId);
+  const family = getFamilyById(familyId);
+  return family ? [family] : [];
 }
-
-export function getFlagshipProduct(family) {
-  return family.products.find((product) => product.id === family.flagship) || family.products[0];
-}
-
-export function getProductStatus(statusKey) {
-  return productStatuses[statusKey] || productStatuses.proximamente;
-}
-
-export const productCounts = {
-  families: productFamilies.length,
-  products: allProducts.length,
-  available: allProducts.filter((product) => product.status === 'disponible').length,
-  inDevelopment: allProducts.filter((product) => product.status === 'desarrollo').length,
-  upcoming: allProducts.filter((product) => product.status === 'proximamente').length,
-};

@@ -2,8 +2,7 @@
  * Configuración central de ALMATE · Digital Studio.
  * ---------------------------------------------------------------
  * Todo dato comercial, de contacto y de marca vive acá.
- * Los valores vacíos están marcados como PENDIENTES a propósito:
- * no mostramos enlaces ni números que todavía no se puedan verificar.
+ * Los canales reales están definidos: correo, WhatsApp y endpoint de contacto.
  */
 
 const envSiteUrl =
@@ -21,44 +20,62 @@ export const site = {
   valueProposition:
     'Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas tecnológicas para negocios que quieren avanzar.',
 
-  /* PENDIENTE: definir el dominio oficial. Mientras esté vacío, canonical,
-     Open Graph y sitemap usan rutas relativas y no se publica una URL falsa. */
+  /* El dominio definitivo todavía no está comprado. Mientras VITE_SITE_URL esté
+     vacío, canonical, Open Graph y sitemap usan rutas relativas y no se publica
+     una URL que no exista. */
   url: envSiteUrl,
   locale: 'es_AR',
   language: 'es-AR',
 
-  /* Identidad visual oficial. Los PNG son transparentes con arte negro:
-     se aplican siempre sobre superficies claras, sin filtros ni variantes. */
+  /* Identidad visual oficial. Los PNG son transparentes con arte #1A1A1A.
+     Sobre fondos oscuros se aplica la variante blanca desde Logo.js
+     (`filter: brightness(0) invert(1)`); sobre fondos claros se conserva el
+     original. Los archivos de public/ no se modifican. */
   logo: '/logo_almate.png',
   logoMark: '/logo_a_almate.png',
   logoWidth: 620,
   logoHeight: 165,
   logoAlt: 'ALMATE · Digital Studio',
+  logoInvertOnDark: true,
   favicon: '/favicon-32.png',
   appleTouchIcon: '/apple-touch-icon.png',
   ogImage: '/og-image.png',
   themeColor: '#1A1A1A',
 
-  /* PENDIENTE: completar con el correo comercial real. */
-  email: '',
-  /* PENDIENTE: completar con el número real en formato internacional, sin + ni espacios. */
+  /* Canales comerciales reales. */
+  email: 'almate.digitalstudio@gmail.com',
   whatsapp: {
-    number: '',
+    number: '5491134761743',
     defaultMessage:
       'Hola ALMATE. Quiero contarles sobre un proyecto digital y conocer cómo pueden ayudarme.',
   },
 
-  /* PENDIENTE: agregar perfiles oficiales verificados. Mientras esté vacío,
-     el footer no muestra iconos ni enlaces a redes. */
-  social: [],
+  /* Perfiles oficiales verificados. */
+  social: [
+    {
+      label: 'Instagram',
+      url: 'https://www.instagram.com/almate.digitalstudio/',
+    },
+  ],
 
   contact: {
-    note: 'No hay un servidor recibiendo el formulario en esta etapa. La consulta se prepara y se envía por WhatsApp o por el cliente de correo del visitante.',
+    endpoint: '/api/contact',
+    note: 'La consulta se envía por correo a ALMATE. Si preferís una respuesta inmediata, también podés escribirnos por WhatsApp.',
     pendingNote:
-      'El canal de contacto directo todavía no está habilitado. Podés preparar tu consulta y copiarla; no se envió ningún mensaje.',
-    responseNote: 'Respondemos por el mismo canal que elijas para la consulta.',
+      'El envío por correo todavía no está configurado en este entorno. Podés escribirnos por WhatsApp o copiar tu consulta.',
+    responseNote: 'Respondemos por el correo o el WhatsApp que nos indiques.',
     consent:
       'Acepto que ALMATE utilice estos datos únicamente para responder mi consulta.',
+    sending: 'Enviando tu consulta…',
+    success:
+      'Consulta enviada. Recibimos tu mensaje y vamos a responderte por el correo o el WhatsApp que indicaste.',
+    validation: 'Revisá los campos marcados. No se envió ningún mensaje.',
+    serverError:
+      'No pudimos enviar la consulta en este momento. Podés reintentar o escribirnos por WhatsApp.',
+    notConfigured:
+      'El envío por correo todavía no está configurado en este entorno. Podés escribirnos por WhatsApp o copiar tu consulta.',
+    rateLimited:
+      'Recibimos varias consultas seguidas desde esta conexión. Esperá unos minutos o escribinos por WhatsApp.',
   },
 
   seo: {
@@ -72,7 +89,7 @@ export const site = {
 
   institutional: {
     credit: 'Desarrollado por ALMATE · Soluciones digitales.',
-    status: 'Digital Studio · Ecosistema en evolución',
+    status: 'Digital Studio · Soluciones digitales',
     workingModel: 'Trabajo directo, sin capas innecesarias.',
     principles: [
       'Claridad antes que complejidad.',
@@ -116,7 +133,7 @@ export function getWhatsAppUrl(message = site.whatsapp.defaultMessage) {
 }
 
 export function getEmailUrl({
-  subject = 'Consulta desde almate',
+  subject = 'Consulta desde el sitio de ALMATE',
   body = '',
 } = {}) {
   if (!site.email) return null;
@@ -124,4 +141,13 @@ export function getEmailUrl({
   if (subject) query.push(`subject=${encodeURIComponent(subject)}`);
   if (body) query.push(`body=${encodeURIComponent(body)}`);
   return `mailto:${site.email}${query.length ? `?${query.join('&')}` : ''}`;
+}
+
+/**
+ * URL del endpoint de contacto. En Vercel la función vive en /api/contact.
+ * El base path se respeta para previews con BASE_PATH distinto de "/".
+ */
+export function getContactEndpoint(base = '/') {
+  const cleanBase = String(base || '/').replace(/\/+$/, '');
+  return `${cleanBase}/api/contact`;
 }

@@ -5,11 +5,17 @@
  * envía conversaciones a ningún servidor y no guarda datos personales.
  *
  * El motor no contiene contenido comercial: todo vive en
- * `almate-assistant.config.js`. Para reutilizarlo en otra plantilla
- * ALMATE alcanza con reemplazar la configuración.
+ * `almate-assistant.config.js`.
+ *
+ * Acciones soportadas por cada opción:
+ *   menu · intent · faq · answer · links · whatsapp · href · nextMenu ·
+ *   followUpOptions · capture · back
+ *
+ * Las acciones se guardan en un WeakMap asociado al botón. Nunca se
+ * serializa HTML ni se confía en atributos data-* para ejecutar contenido.
  *
  * API:
- *   initAssistant(config?) → { open, close, toggle, destroy }
+ *   initAssistant(config?) → { open, close, toggle, menu, faq, ask, destroy }
  *   window.ALMATEAssistant (referencia de la instancia activa)
  */
 
@@ -28,7 +34,7 @@ function normalize(value) {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9ñ\s]/g, ' ')
+    .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -59,13 +65,60 @@ function safeText(value) {
   return String(value == null ? '' : value);
 }
 
+function editDistance(a, b) {
+  const left = String(a);
+  const right = String(b);
+  if (left === right) return 0;
+  if (!left.length) return right.length;
+  if (!right.length) return left.length;
+
+  let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i += 1) {
+    const current = [i];
+    for (let j = 1; j <= right.length; j += 1) {
+      current[j] = Math.min(
+        previous[j] + 1,
+        current[j - 1] + 1,
+        previous[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
+      );
+    }
+    previous = current;
+  }
+  return previous[right.length];
+}
+
+function isFuzzyToken(token, keyword) {
+  if (token === keyword) return true;
+  if (keyword.length < 5 || token.length < 4) return false;
+  if (token[0] !== keyword[0]) return false;
+  if (Math.abs(token.length - keyword.length) > 2) return false;
+  const allowed = keyword.length >= 8 ? 2 : 1;
+  return editDistance(token, keyword) <= allowed;
+}
+
+function tokenMatches(token, keyword) {
+  if (token === keyword) return true;
+  if (keyword.length >= 4 && token.length >= 4) {
+    if (keyword.endsWith('s') && token === keyword.slice(0, -1)) return true;
+    if (token.endsWith('s') && keyword === token.slice(0, -1)) return true;
+  }
+  return isFuzzyToken(token, keyword);
+}
+
+function termsOf(item) {
+  return [
+    ...(Array.isArray(item.keywords) ? item.keywords : []),
+    ...(Array.isArray(item.synonyms) ? item.synonyms : []),
+  ];
+}
+
 /* ------------------------------------------------------------------ */
 /* Reconocimiento de texto                                             */
 /* ------------------------------------------------------------------ */
 
 function scoreKeywords(text, keywords = []) {
   const normalizedText = ` ${normalize(text)} `;
-  const tokens = new Set(tokenize(text));
+  const tokens = tokenize(text);
   let score = 0;
 
   for (const raw of keywords) {
@@ -73,24 +126,17 @@ function scoreKeywords(text, keywords = []) {
     if (!keyword) continue;
 
     if (keyword.includes(' ')) {
-      if (normalizedText.includes(` ${keyword} `)) score += 4;
+      if (normalizedText.includes(` ${keyword} `)) score += 5 + keyword.split(' ').length;
       continue;
     }
 
-    if (tokens.has(keyword)) {
-      score += 3;
+    if (tokens.includes(keyword)) {
+      score += 4;
       continue;
     }
 
-    /* Coincidencia parcial prudente: solo palabras de 5+ letras. */
-    if (keyword.length >= 5) {
-      const partial = [...tokens].some(
-        (token) =>
-          token.length >= 5 &&
-          token !== keyword &&
-          (token.startsWith(keyword) || keyword.startsWith(token)),
-      );
-      if (partial) score += 1;
+    if (tokens.some((token) => tokenMatches(token, keyword))) {
+      score += 2;
     }
   }
 
@@ -100,18 +146,44 @@ function scoreKeywords(text, keywords = []) {
 function rankMatches(config, text) {
   const matches = [];
 
-  for (const intent of config.keywordMatching?.intents || []) {
-    const score = scoreKeywords(text, intent.keywords);
-    if (score > 0) matches.push({ type: 'intent', item: intent, score, priority: intent.priority || 0 });
+  if (config.keywordMatching?.enabled !== false) {
+    for (const intent of config.keywordMatching?.intents || []) {
+      if (intent.enabled === false) continue;
+      const score = scoreKeywords(text, termsOf(intent));
+      if (score > 0) {
+        matches.push({
+          type: 'intent',
+          item: intent,
+          score,
+          priority: Number(intent.priority || 0),
+        });
+      }
+    }
   }
 
-  for (const item of config.faq?.items || []) {
-    const score = scoreKeywords(text, item.keywords);
-    if (score > 0) matches.push({ type: 'faq', item, score, priority: 5 });
+  if (config.faq?.enabled !== false) {
+    for (const item of config.faq?.items || []) {
+      if (item.enabled === false) continue;
+      const score = scoreKeywords(text, termsOf(item));
+      if (score > 0) {
+        matches.push({
+          type: 'faq',
+          item,
+          score,
+          priority: Number(item.priority || 5),
+        });
+      }
+    }
   }
 
   matches.sort((a, b) => b.score - a.score || b.priority - a.priority);
   return matches;
+}
+
+function matchPath(match) {
+  return match.type === 'faq'
+    ? `faq:${match.item.id}`
+    : `menu:${match.item.menu || match.item.id}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -134,6 +206,7 @@ export function initAssistant(userConfig = {}) {
 
   const threshold = Number(config.keywordMatching?.threshold || 3);
   const fallbackOptions = Array.isArray(config.fallbackOptions) ? config.fallbackOptions : [];
+  const rootId = config.guidedMenus?.rootMenu || 'inicio';
 
   /* --------------------------- DOM --------------------------- */
   const root = document.createElement('div');
@@ -193,9 +266,12 @@ export function initAssistant(userConfig = {}) {
 
   let previousFocus = null;
   let currentMenu = null;
+  let menuStack = [];
   let lastUserMessage = '';
   let messageCount = 0;
   let destroyed = false;
+  const sessionContext = [];
+  const actionStore = new WeakMap();
 
   /* ----------------------- Helpers de render ----------------------- */
 
@@ -204,9 +280,11 @@ export function initAssistant(userConfig = {}) {
   }
 
   function addMessage(role, text) {
-    if (messageCount >= config.behavior.maxMessages) {
+    const maxMessages = Number(config.behavior?.maxMessages || 200);
+    if (messageCount >= maxMessages) {
       const first = log.querySelector('.aa-msg');
       if (first) first.remove();
+      messageCount = Math.max(0, messageCount - 1);
     }
     const message = document.createElement('div');
     message.className = `aa-msg aa-msg--${role}`;
@@ -259,68 +337,136 @@ export function initAssistant(userConfig = {}) {
     return message;
   }
 
+  function normalizeAction(item) {
+    if (!item || item.enabled === false) return null;
+    return {
+      label: safeText(item.label || '').trim(),
+      menu: item.menu || null,
+      intent: item.intent || null,
+      faq: item.faq || null,
+      answer: item.answer || '',
+      links: Array.isArray(item.links) ? item.links : [],
+      whatsapp: item.whatsapp || false,
+      whatsappMessage: item.whatsappMessage || '',
+      href: item.href || null,
+      nextMenu: item.nextMenu || null,
+      followUpOptions: Array.isArray(item.followUpOptions) ? item.followUpOptions : [],
+      capture: item.capture || '',
+      back: Boolean(item.back),
+      soft: Boolean(item.soft),
+    };
+  }
+
+  function actionKey(action) {
+    return [
+      action.label,
+      action.menu,
+      action.intent,
+      action.faq,
+      action.answer ? 'answer' : '',
+      action.href,
+      action.whatsapp ? 'wa' : '',
+      action.back ? 'back' : '',
+    ].join('|');
+  }
+
+  function createOptionButton(action) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `aa-option${action.soft || action.back ? ' aa-option--soft' : ''}`;
+    button.textContent = action.label;
+    actionStore.set(button, action);
+    return button;
+  }
+
   function renderOptions(items = []) {
     options.replaceChildren();
-    if (!items.length) {
+    const seen = new Set();
+    const actions = items
+      .map((item) => normalizeAction(item))
+      .filter((action) => action && action.label)
+      .filter((action) => {
+        const key = actionKey(action);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+    if (!actions.length) {
       options.hidden = true;
       return;
     }
     options.hidden = false;
-
-    for (const item of items) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'aa-option';
-      button.textContent = item.label;
-
-      if (item.menu) button.dataset.menu = item.menu;
-      if (item.intent) button.dataset.intent = item.intent;
-      if (item.faq) button.dataset.faq = item.faq;
-      if (item.href) button.dataset.href = item.href;
-      if (item.whatsapp) button.dataset.whatsapp = '1';
-
-      options.append(button);
-    }
+    for (const action of actions) options.append(createOptionButton(action));
     scrollToEnd();
   }
 
   function appendToOptions(items = []) {
+    const current = [...options.querySelectorAll('button.aa-option')];
+    const seen = new Set(
+      current.map((button) => {
+        const action = actionStore.get(button);
+        return action ? actionKey(action) : button.textContent;
+      }),
+    );
+
     for (const item of items) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'aa-option aa-option--soft';
-      button.textContent = item.label;
-      if (item.menu) button.dataset.menu = item.menu;
-      if (item.intent) button.dataset.intent = item.intent;
-      if (item.faq) button.dataset.faq = item.faq;
-      if (item.href) button.dataset.href = item.href;
-      if (item.whatsapp) button.dataset.whatsapp = '1';
-      options.append(button);
+      const action = normalizeAction(item);
+      if (!action || !action.label) continue;
+      const key = actionKey(action);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      options.append(createOptionButton(action));
     }
     options.hidden = false;
     scrollToEnd();
   }
 
   function backOption() {
-    return { label: 'Volver al inicio', menu: config.guidedMenus?.rootMenu || 'inicio' };
+    if (menuStack.length) {
+      return { label: 'Volver al menú anterior', back: true, soft: true };
+    }
+    if (currentMenu && currentMenu !== rootId) {
+      return { label: 'Volver al menú principal', menu: rootId, soft: true };
+    }
+    return { label: 'Menú principal', menu: rootId, soft: true };
+  }
+
+  function followUpItems(action) {
+    return action.followUpOptions
+      .map((item) => normalizeAction(item))
+      .filter(Boolean);
+  }
+
+  /* Una respuesta se muestra dentro del menú actual: volver debe devolver a
+     las opciones de ese menú, no saltar al anterior de la pila. */
+  function answerBackOption() {
+    return {
+      label: 'Volver al menú anterior',
+      menu: currentMenu || rootId,
+      soft: true,
+    };
+  }
+
+  function renderAnswerOptions(action) {
+    const items = [...followUpItems(action), answerBackOption()];
+    renderOptions(items);
   }
 
   /* --------------------------- WhatsApp --------------------------- */
 
   function whatsappUrl(context = '') {
-    if (!config.whatsapp?.enabled) return null;
-    const base = typeof config.whatsapp.buildUrl === 'function' ? config.whatsapp.buildUrl() : null;
-    if (!base) return null;
-    const message = context
-      ? `${config.whatsapp.defaultMessage}\n\nConsulta: ${context.slice(0, 240)}`
+    if (config.whatsapp?.enabled === false) return null;
+    const buildUrl =
+      typeof config.whatsapp?.buildUrl === 'function' ? config.whatsapp.buildUrl : null;
+    if (!buildUrl) return null;
+
+    const extra = [context, ...sessionContext].filter(Boolean).join('. ');
+    const message = extra
+      ? `${config.whatsapp.defaultMessage}\n\nConsulta: ${extra.slice(0, 420)}`
       : config.whatsapp.defaultMessage;
-    try {
-      const url = new URL(base);
-      url.searchParams.set('text', message);
-      return url.toString();
-    } catch {
-      return null;
-    }
+
+    return buildUrl(message);
   }
 
   function renderFooter() {
@@ -339,15 +485,6 @@ export function initAssistant(userConfig = {}) {
       note.className = 'aa-wa aa-wa--pending';
       note.textContent = config.whatsapp?.pendingLabel || 'Canal de contacto pendiente.';
       foot.append(note);
-
-      const contactHref = config.whatsapp?.pendingHref;
-      if (contactHref && isSafeHref(contactHref)) {
-        const anchor = document.createElement('a');
-        anchor.className = 'aa-link';
-        anchor.href = contactHref;
-        anchor.textContent = 'Ir a contacto';
-        foot.append(anchor);
-      }
     }
 
     const note = document.createElement('span');
@@ -363,71 +500,155 @@ export function initAssistant(userConfig = {}) {
       addLinks(addMessage('bot', 'Mientras tanto, podés preparar tu consulta desde la página de contacto.'), [
         { label: 'Ir a contacto', href: config.whatsapp?.pendingHref || '/contacto/' },
       ]);
+      renderOptions([backOption()]);
       return;
     }
+
+    addMessage(
+      'bot',
+      'Te abro WhatsApp con un mensaje preparado. Revisalo y enviálo desde tu aplicación para que podamos responderte.',
+    );
     window.open(url, '_blank', 'noopener,noreferrer');
+    renderOptions([backOption()]);
   }
 
   /* -------------------------- Respuestas -------------------------- */
 
-  function respondIntent(intentId) {
-    const intent = (config.keywordMatching?.intents || []).find((item) => item.id === intentId);
-    const menu = config.guidedMenus?.menus?.[intentId] || (intent?.menu ? config.guidedMenus?.menus?.[intent.menu] : null);
+  function menuOptionForFaq(item) {
+    return item.suggestedQuestions
+      ? item.suggestedQuestions.map((suggestion) =>
+          typeof suggestion === 'string'
+            ? { label: suggestion, faq: suggestion }
+            : suggestion,
+        )
+      : [];
+  }
 
-    if (menu) {
-      openMenu(intentId in (config.guidedMenus?.menus || {}) ? intentId : intent.menu);
+  function relatedFaqOptions(item) {
+    if (!item) return [];
+    const configured = menuOptionForFaq(item);
+    if (configured.length) return configured;
+
+    const items = (config.faq?.items || []).filter(
+      (faq) => faq.enabled !== false && faq.id !== item.id && faq.category === item.category,
+    );
+    return items.slice(0, 3).map((faq) => ({ label: faq.question, faq: faq.id, soft: true }));
+  }
+
+  function respondFaq(faqId) {
+    const item = (config.faq?.items || []).find(
+      (faq) => faq.id === faqId && faq.enabled !== false,
+    );
+    if (!item) {
+      showFallback();
       return;
     }
 
-    if (intent?.answer) {
+    const bubble = addMessage('bot', item.answer);
+    addLinks(bubble, item.links || []);
+    renderOptions([...relatedFaqOptions(item), answerBackOption()]);
+  }
+
+  function respondIntent(intentId) {
+    const intent = (config.keywordMatching?.intents || []).find(
+      (item) => item.id === intentId && item.enabled !== false,
+    );
+    if (!intent) {
+      showFallback();
+      return;
+    }
+
+    const menuId = intent.menu || (config.guidedMenus?.menus?.[intentId] ? intentId : null);
+    if (menuId && config.guidedMenus?.menus?.[menuId]) {
+      openMenu(menuId);
+      return;
+    }
+
+    if (intent.answer) {
       const bubble = addMessage('bot', intent.answer);
       addLinks(bubble, intent.links || []);
-      renderOptions([backOption()]);
+      renderOptions([
+        ...(intent.followUpOptions || []).map((item) => normalizeAction(item)).filter(Boolean),
+        answerBackOption(),
+      ]);
       return;
     }
 
     showFallback();
   }
 
-  function respondFaq(faqId) {
-    const item = (config.faq?.items || []).find((faq) => faq.id === faqId);
-    if (!item) {
+  function showFallback() {
+    const bubble = addMessage('bot', config.fallbackMessage);
+    addLinks(bubble, []);
+    renderOptions([...fallbackOptions, backOption()]);
+  }
+
+  function openMenu(menuId, { pushHistory = true } = {}) {
+    const menu = config.guidedMenus?.menus?.[menuId];
+    if (!menu || menu.enabled === false) {
       showFallback();
       return;
     }
-    const bubble = addMessage('bot', item.answer);
-    addLinks(bubble, item.links || []);
-    renderOptions([backOption()]);
+
+    if (pushHistory && currentMenu && currentMenu !== menuId) {
+      menuStack.push(currentMenu);
+      if (menuStack.length > 12) menuStack = menuStack.slice(-12);
+    }
+    currentMenu = menuId;
+
+    addMessage('bot', menu.title || 'Elegí una opción');
+    const items = Array.isArray(menu.options) ? [...menu.options] : [];
+    if (menuId !== rootId) items.push(backOption());
+    else items.push({ label: 'Volver al inicio', menu: rootId, soft: true });
+    renderOptions(items);
   }
 
-  function showFallback() {
-    const bubble = addMessage('bot', config.fallbackMessage);
-    addLinks(bubble, fallbackOptions);
+  function goBack() {
+    if (menuStack.length) {
+      const previous = menuStack.pop();
+      openMenu(previous, { pushHistory: false });
+      return;
+    }
+    openMenu(rootId, { pushHistory: false });
+  }
 
-    const items = fallbackOptions.map((option) =>
-      option.label === 'Hablar con ALMATE' && config.whatsapp?.enabled
-        ? { ...option, label: 'Hablar por WhatsApp', whatsapp: true, href: undefined }
-        : option,
+  function showAmbiguity(matches) {
+    const unique = [];
+    const seen = new Set();
+    for (const match of matches) {
+      const path = matchPath(match);
+      if (seen.has(path)) continue;
+      seen.add(path);
+      unique.push(match);
+      if (unique.length === 3) break;
+    }
+
+    const bubble = addMessage(
+      'bot',
+      'Tu consulta puede relacionarse con más de un tema. Elegí el camino que mejor represente lo que necesitás:',
     );
+    addLinks(bubble, []);
+
+    const items = unique.map((match) => {
+      if (match.type === 'faq') {
+        return { label: match.item.question, faq: match.item.id };
+      }
+      const menu = config.guidedMenus?.menus?.[match.item.menu];
+      return {
+        label: menu?.title || match.item.label || 'Ver opciones',
+        menu: match.item.menu || rootId,
+      };
+    });
     items.push(backOption());
     renderOptions(items);
   }
 
-  function openMenu(menuId) {
-    const menu = config.guidedMenus?.menus?.[menuId];
-    if (!menu) {
+  function respondToText(text) {
+    if (config.keywordMatching?.enabled === false) {
       showFallback();
       return;
     }
-    currentMenu = menuId;
-    addMessage('bot', menu.title || 'Elegí una opción');
-    const rootId = config.guidedMenus?.rootMenu || 'inicio';
-    const items = [...(menu.options || [])];
-    if (menuId !== rootId) items.push(backOption());
-    renderOptions(items);
-  }
 
-  function respondToText(text) {
     const matches = rankMatches(config, text);
     const best = matches[0];
 
@@ -436,30 +657,15 @@ export function initAssistant(userConfig = {}) {
       return;
     }
 
-    const tied = matches.filter((match) => match.score === best.score);
-    const uniquePaths = new Set(
-      tied.map((match) =>
-        match.type === 'faq' ? `faq:${match.item.id}` : `menu:${match.item.menu || match.item.id}`,
-      ),
-    );
-    if (uniquePaths.size > 1) {
-      const bubble = addMessage(
-        'bot',
-        'Tu consulta puede relacionarse con más de un tema. Elegí el camino que mejor represente lo que necesitás:',
-      );
-      addLinks(bubble, []);
-      renderOptions([
-        ...tied.slice(0, 3).map((match) => ({
-          label:
-            match.type === 'faq'
-              ? match.item.question
-              : config.guidedMenus?.menus?.[match.item.menu]?.title || 'Ver opciones',
-          ...(match.type === 'faq'
-            ? { faq: match.item.id }
-            : { menu: match.item.menu || config.guidedMenus.rootMenu }),
-        })),
-        backOption(),
-      ]);
+    const distinct = matches.filter((match) => matchPath(match) !== matchPath(best));
+    const runnerUp = distinct[0];
+    const ambiguous =
+      runnerUp &&
+      (runnerUp.score === best.score ||
+        (runnerUp.score >= best.score - 1 && best.score < 9));
+
+    if (ambiguous) {
+      showAmbiguity(matches.filter((match) => match.score >= runnerUp.score - 1));
       return;
     }
 
@@ -471,11 +677,86 @@ export function initAssistant(userConfig = {}) {
     if (best.item.answer && !config.guidedMenus?.menus?.[best.item.id]) {
       const bubble = addMessage('bot', best.item.answer);
       addLinks(bubble, best.item.links || []);
-      renderOptions([backOption()]);
+      renderOptions([
+        ...(best.item.followUpOptions || []).map((item) => normalizeAction(item)).filter(Boolean),
+        answerBackOption(),
+      ]);
       return;
     }
 
     respondIntent(best.item.id);
+  }
+
+  function performAction(action, label) {
+    addMessage('user', label);
+    if (action.capture) {
+      sessionContext.push(`${action.capture}: ${label}`);
+      if (sessionContext.length > 8) sessionContext.shift();
+    }
+
+    if (action.whatsapp) {
+      openWhatsApp(action.whatsappMessage || label);
+      return;
+    }
+
+    if (action.href) {
+      if (!isSafeHref(action.href)) {
+        addMessage('bot', config.fallbackMessage);
+        renderOptions([backOption()]);
+        return;
+      }
+      if (/^https?:/i.test(action.href)) {
+        window.open(action.href, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.assign(action.href);
+      }
+      renderOptions([backOption()]);
+      return;
+    }
+
+    if (action.faq) {
+      respondFaq(action.faq);
+      return;
+    }
+
+    if (action.intent) {
+      respondIntent(action.intent);
+      return;
+    }
+
+    if (action.back) {
+      goBack();
+      return;
+    }
+
+    if (action.menu) {
+      if (action.answer) {
+        const bubble = addMessage('bot', action.answer);
+        addLinks(bubble, action.links);
+      }
+      openMenu(action.menu);
+      return;
+    }
+
+    if (action.answer) {
+      const bubble = addMessage('bot', action.answer);
+      addLinks(bubble, action.links);
+      if (action.nextMenu) {
+        openMenu(action.nextMenu);
+      } else {
+        renderAnswerOptions(action);
+      }
+      return;
+    }
+
+    if (action.links.length) {
+      const bubble = addMessage('bot', 'Te comparto estos enlaces:');
+      addLinks(bubble, action.links);
+      renderOptions([...followUpItems(action), backOption()]);
+      return;
+    }
+
+    showFallback();
   }
 
   function handleUserMessage(text) {
@@ -488,7 +769,7 @@ export function initAssistant(userConfig = {}) {
     options.hidden = true;
 
     const typing = addTyping();
-    const delay = prefersReducedMotion() ? 60 : 340;
+    const delay = prefersReducedMotion() ? 40 : 300;
     window.setTimeout(() => {
       if (destroyed) return;
       typing.remove();
@@ -510,8 +791,6 @@ export function initAssistant(userConfig = {}) {
     panel.hidden = false;
     fab.setAttribute('aria-expanded', 'true');
     document.body.classList.add('aa-is-open');
-    /* Fuerza el cálculo de layout para que la transición se ejecute incluso
-       en navegadores headless o pestañas en segundo plano. */
     void panel.offsetWidth;
     panel.classList.add('is-open');
     window.setTimeout(() => closeButton.focus({ preventScroll: true }), prefersReducedMotion() ? 0 : 40);
@@ -553,33 +832,12 @@ export function initAssistant(userConfig = {}) {
   options.addEventListener('click', (event) => {
     const button = event.target.closest('button.aa-option');
     if (!button) return;
-
-    if (button.dataset.menu) {
-      openMenu(button.dataset.menu);
-      return;
-    }
-    if (button.dataset.intent) {
-      respondIntent(button.dataset.intent);
-      return;
-    }
-    if (button.dataset.faq) {
-      respondFaq(button.dataset.faq);
-      return;
-    }
-    if (button.dataset.whatsapp) {
-      openWhatsApp(lastUserMessage);
-      return;
-    }
-    if (button.dataset.href) {
-      const href = button.dataset.href;
-      if (isSafeHref(href)) {
-        if (/^https?:/i.test(href)) window.open(href, '_blank', 'noopener,noreferrer');
-        else window.location.assign(href);
-      }
-    }
+    const action = actionStore.get(button);
+    if (!action) return;
+    performAction(action, button.textContent.trim());
   });
 
-  panel.addEventListener('keydown', (event) => {
+  function onPanelKeydown(event) {
     if (event.key === 'Escape') {
       event.stopPropagation();
       close();
@@ -599,34 +857,47 @@ export function initAssistant(userConfig = {}) {
       event.preventDefault();
       first.focus();
     }
-  });
+  }
 
-  document.addEventListener('keydown', (event) => {
+  function onDocumentKeydown(event) {
     if (event.key === 'Escape' && !panel.hidden) close();
-  });
+  }
 
-  document.addEventListener('click', (event) => {
-    if (panel.hidden) return;
-    if (root.contains(event.target)) return;
-    close();
-  });
+  panel.addEventListener('keydown', onPanelKeydown);
+  document.addEventListener('keydown', onDocumentKeydown);
 
   /* ----------------------- Estado inicial ----------------------- */
 
   addMessage('bot', config.welcomeMessage);
   renderFooter();
-  if (config.behavior.showInitialOptions && config.guidedMenus?.enabled) {
-    const rootMenu = config.guidedMenus.menus?.[config.guidedMenus.rootMenu || 'inicio'];
-    if (rootMenu) renderOptions(rootMenu.options || []);
+  if (config.behavior.showInitialOptions && config.guidedMenus?.enabled !== false) {
+    const rootMenu = config.guidedMenus.menus?.[rootId];
+    if (rootMenu) {
+      currentMenu = rootId;
+      renderOptions(rootMenu.options || []);
+    }
   }
 
   const api = {
     open,
     close,
     toggle,
+    menu: openMenu,
+    faq: respondFaq,
+    ask: handleUserMessage,
+    buildWhatsAppUrl: whatsappUrl,
+    getState() {
+      return {
+        currentMenu,
+        menuStack: [...menuStack],
+        sessionContext: [...sessionContext],
+        messages: [...log.querySelectorAll('.aa-msg')].map((message) => message.textContent.trim()),
+      };
+    },
     destroy() {
       destroyed = true;
-      document.removeEventListener('click', close);
+      panel.removeEventListener('keydown', onPanelKeydown);
+      document.removeEventListener('keydown', onDocumentKeydown);
       root.remove();
       document.body.classList.remove('has-assistant');
       delete window[INSTANCE_KEY];

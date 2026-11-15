@@ -6,9 +6,8 @@ import { HeroVisual } from '../components/HeroVisual.js';
 import { ProcessSteps } from '../components/ProcessSteps.js';
 import { ProjectCard } from '../components/ProjectCard.js';
 import { SectionHeading } from '../components/SectionHeading.js';
-import { StatusBadge } from '../components/StatusBadge.js';
-import { getProductStatus, productFamilies } from '../data/products.js';
-import { getFeaturedProjects, getProjectStatus } from '../data/projects.js';
+import { productFamilies } from '../data/products.js';
+import { getFeaturedProjects } from '../data/projects.js';
 import { icon } from '../lib/icons.js';
 import { escapeAttr, escapeHtml } from '../lib/html.js';
 import { asset, route } from '../lib/paths.js';
@@ -102,10 +101,6 @@ function CapabilityCard({ capability }) {
 }
 
 function NexoSpotlight() {
-  const nexo = productFamilies.find((family) => family.id === 'nexo');
-  const stock = nexo.products.find((product) => product.id === 'nexo-stock');
-  const gestion = nexo.products.find((product) => product.id === 'nexo-gestion');
-
   return `<section class="nexo-spotlight" aria-labelledby="nexo-spotlight-title">
     <div class="container">
       <div class="nexo-spotlight__panel" data-reveal>
@@ -113,18 +108,16 @@ function NexoSpotlight() {
           <p class="eyebrow"><span class="eyebrow__index">ALMATE</span><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Nexo</span></p>
           <h2 class="nexo-spotlight__title" id="nexo-spotlight-title">Gestión que se conecta.</h2>
           <p class="nexo-spotlight__description">
-            Nexo es la familia de productos de gestión integrada de ALMATE. Una visión modular para conectar inventario, ventas, precios y administración sin saltar entre herramientas.
+            Nexo reúne soluciones de gestión para ordenar inventario, ventas, precios, reportes y administración en una misma lógica de trabajo. Cada implementación se define según el alcance contratado.
           </p>
           <div class="nexo-spotlight__products">
             <div class="nexo-product">
               <span class="nexo-product__icon" aria-hidden="true">${icon('database')}</span>
-              <div><strong>${escapeHtml(stock.name)}</strong><span>Inventario y ventas</span></div>
-              ${StatusBadge({ status: getProductStatus(stock.status) })}
+              <div><strong>Stock e inventario</strong><span>Existencias, movimientos y reposición.</span></div>
             </div>
             <div class="nexo-product">
               <span class="nexo-product__icon" aria-hidden="true">${icon('layers')}</span>
-              <div><strong>${escapeHtml(gestion.name)}</strong><span>Administración integrada</span></div>
-              ${StatusBadge({ status: getProductStatus(gestion.status) })}
+              <div><strong>Ventas y administración</strong><span>Productos, precios, reportes y permisos.</span></div>
             </div>
           </div>
           <div class="btn-group">
@@ -146,12 +139,12 @@ function NexoSpotlight() {
             <div class="nexo-node nexo-node--stock">
               <span>${icon('database')}</span>
               <strong>Stock</strong>
-              <small>en desarrollo</small>
+              <small>inventario</small>
             </div>
             <div class="nexo-node nexo-node--gestion">
               <span>${icon('layers')}</span>
               <strong>Gestión</strong>
-              <small>próximamente</small>
+              <small>ventas y reportes</small>
             </div>
             <div class="nexo-chip nexo-chip--one">datos</div>
             <div class="nexo-chip nexo-chip--two">módulos</div>
@@ -243,7 +236,7 @@ export function HomePage() {
         </div>
         <div class="project-grid project-grid--featured">
           ${featuredProjects
-            .map((project) => ProjectCard({ project, status: getProjectStatus(project.status) }))
+            .map((project) => ProjectCard({ project }))
             .join('')}
         </div>
       </div>
@@ -253,11 +246,11 @@ export function HomePage() {
       <div class="container">
         <div class="section-row">
           ${SectionHeading({
-            eyebrow: 'Ecosistema ALMATE',
+            eyebrow: 'Soluciones ALMATE',
             index: '03',
-            title: 'Seis familias. Una misma lógica de trabajo.',
+            title: 'Seis líneas. Una misma lógica de trabajo.',
             intro:
-              'Cada familia agrupa soluciones pensadas para un tipo de negocio. Los estados indican en qué etapa está cada producto, sin promesas que todavía no se puedan cumplir.',
+              'Cada línea agrupa soluciones pensadas para un tipo de negocio. ALMATE puede desarrollar, configurar y adaptar el alcance según la necesidad concreta.',
             id: 'ecosystem-title',
           })}
           ${Button({ label: 'Explorar productos', href: route('/productos/'), variant: 'ghost', iconName: 'grid' })}
@@ -267,7 +260,7 @@ export function HomePage() {
         </div>
         <aside class="ecosystem-note" data-reveal>
           <span class="ecosystem-note__icon" aria-hidden="true">${icon('info')}</span>
-          <p><strong>Familia y producto no son lo mismo.</strong> Una familia es una línea conceptual del ecosistema. Un producto es una herramienta con estado propio. Ningún producto se presenta como disponible si todavía no tiene una versión pública verificable.</p>
+          <p><strong>Una línea, distintos alcances.</strong> Cada solución se adapta al negocio y a su forma de operar. El alcance, las etapas y las funcionalidades se definen en la propuesta.</p>
         </aside>
       </div>
     </section>

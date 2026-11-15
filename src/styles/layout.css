@@ -31,21 +31,20 @@
   gap: 10px;
   flex: 0 0 auto;
   min-height: 44px;
+  padding: 4px 0;
   color: var(--color-text);
-  /* El arte oficial es negro y transparente: se apoya siempre sobre una
-     superficie clara para garantizar contraste, sin filtros ni variantes. */
-  padding: 6px 11px;
-  border-radius: var(--radius-sm);
-  background: var(--almate-mist);
-  border: 1px solid rgba(26, 26, 26, 0.12);
+  /* El arte oficial es negro y transparente. Header y footer están sobre
+     superficies oscuras, así que usan la variante blanca centralizada en
+     Logo.js. Las superficies claras conservan el asset original. */
+  background: transparent;
+  border: 1px solid transparent;
   transition:
-    background var(--transition),
-    border-color var(--transition);
+    border-color var(--transition),
+    opacity var(--transition);
 }
 
 .brand:hover {
-  background: var(--almate-white);
-  border-color: rgba(8, 120, 232, 0.45);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .brand:focus-visible {
@@ -88,6 +87,12 @@
   width: auto;
   height: 26px;
   object-fit: contain;
+}
+
+/* Variante blanca para los PNG transparentes del logotipo.
+   Solo se aplica a recursos con transparencia real. */
+.brand__image--invert {
+  filter: brightness(0) invert(1);
 }
 
 .desktop-nav {

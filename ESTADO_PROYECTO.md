@@ -1,7 +1,7 @@
 # Estado del proyecto — ALMATE · Digital Studio
 
-Última actualización: **13 de noviembre de 2026**
-Rama: `main` · Cambios **sin commit** (todo local)
+Última actualización: **14 de noviembre de 2026**
+Rama: `main` · Cambios locales listos para commit
 
 Este documento refleja el estado **real y verificado** del repositorio. No
 incluye funcionalidades planeadas como si estuvieran hechas.
@@ -10,150 +10,219 @@ incluye funcionalidades planeadas como si estuvieran hechas.
 
 ## 1. Resumen
 
-El sitio multipágina pasó por un rebranding integral a **ALMATE · Digital
-Studio** sobre la base Vite + JavaScript vanilla existente, se incorporó
-**ALMATE Assistant** (asistente por reglas), se armó un **sistema de Instagram**
-con cinco plantillas exportables y se completó la documentación.
+El sitio multipágina de **ALMATE · Digital Studio** quedó reestructurado como
+catálogo comercial de seis líneas de solución, con **ALMATE Assistant 2.0**,
+canales de contacto reales, formulario conectado a una función serverless y
+portfolio preparado para capturas.
 
 | Área | Estado |
 |---|---|
 | Identidad visual (logos, paleta, tipografía) | ✅ Implementada |
+| Logo blanco en header/footer sobre fondo oscuro | ✅ Implementado |
 | Home con el orden y copy solicitados | ✅ Implementada |
 | Páginas internas (7 + 404) | ✅ Implementadas y verificadas |
-| Header, menú móvil, footer y crédito | ✅ Implementados |
-| ALMATE Assistant | ✅ Implementado y probado |
-| Sistema de Instagram (5 plantillas + exports) | ✅ Implementado |
-| SEO técnico (title, description, canonical, OG, JSON-LD, sitemap) | ⚠️ Completo con URL relativa (falta dominio) |
-| Contacto directo (WhatsApp/email) | ⚠️ Oculto a propósito hasta tener datos reales |
-| Capturas reales de proyectos | ⚠️ Pendiente |
+| Seis líneas comerciales contratables | ✅ Implementadas |
+| ALMATE Nexo como soluciones de gestión | ✅ Implementado sin estados ni roadmap |
+| ALMATE Assistant 2.0 | ✅ Implementado y probado (45 checks) |
+| WhatsApp comercial real | ✅ Integrado y verificado en HTML |
+| Formulario + `api/contact.js` (Resend) | ✅ Implementado y probado con mocks |
+| Envío real de correo | ⚠️ Pendiente de claves y remitente |
+| Portfolio preparado para capturas | ✅ Estructura y documentación listas |
+| Capturas y demos reales | ⚠️ Pendientes |
+| SEO técnico | ⚠️ Completo con URL relativa (falta dominio) |
+| Configuración Vercel | ✅ Documentada, sin desplegar |
 
 ---
 
 ## 2. Qué se implementó
 
-### 2.1 Identidad
+### 2.1 Identidad y logo
 
-- `src/styles/tokens.css` reescrito: paleta oficial (`#1A1A1A`, `#292929`,
-  `#4D4D4D`, `#F2F2F2`, `#FFFFFF`, `#0878E8`), roles semánticos, derivados
-  accesibles y alias legacy para no romper el CSS existente.
-- Se eliminaron del CSS los colores heredados cian/azul viejo y los glows
-  decorativos; el azul oficial queda como único acento.
-- Logos oficiales usados tal cual: `public/logo_almate.png` y
-  `public/logo_a_almate.png`. Siempre sobre placa clara, sin filtros.
-- Iconos del sitio generados desde el isotipo:
-  `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`
-  (`scripts/generate-brand-icons.mjs`).
-- `public/site.webmanifest` actualizado con nombre, colores y iconos.
-- Header con logo sobre placa, fondo carbón translúcido y menú móvil accesible.
-- Footer carbón con crédito obligatorio en todas las páginas.
+- Paleta oficial en `src/styles/tokens.css`.
+- Logos oficiales: `public/logo_almate.png` (620×165) y
+  `public/logo_a_almate.png` (160×160), PNG transparentes con arte `#1A1A1A`.
+- **Header y footer** usan la variante blanca centralizada en `Logo.js`
+  (`filter: brightness(0) invert(1)`), sin placa clara.
+- **Home hero, sección institucional y avatar del asistente** conservan el
+  original sobre placa clara.
+- El filtro solo se aplica a PNG con canal alfa real. No se aplica a
+  `favicon-32.png`, `apple-touch-icon.png` ni `og-image.png`.
+- Iconos del sitio generados desde el isotipo con
+  `scripts/generate-brand-icons.mjs`.
 
 ### 2.2 Home
 
 Orden implementado:
 
-1. Hero (copy exacto + mockup de interfaz con logo oficial).
+1. Hero.
 2. Soluciones (4 capacidades).
-3. Proyectos y demostraciones.
-4. Ecosistema (6 familias).
-5. Nexo (destacado).
+3. Proyectos.
+4. Seis líneas de solución.
+5. Nexo (destacado comercial).
 6. Diferenciales.
-7. Metodología (proceso por etapas).
-8. Presentación institucional (sección clara con logo y principios).
-9. CTA final: *“Tu próximo proyecto merece una solución propia.”*
+7. Metodología.
+8. Presentación institucional.
+9. CTA final.
 10. Footer.
 
-Copy del hero (literal):
+Se retiraron los badges de estado del ecosistema y del spotlight de Nexo.
 
-> **Ideas que evolucionan. Soluciones que transforman.**
-> Diseñamos y desarrollamos experiencias digitales, sitios web y herramientas
-> tecnológicas para negocios que quieren avanzar.
+### 2.3 Productos
 
-CTAs: **Explorar soluciones** e **Iniciar un proyecto**.
+- Seis líneas comerciales: **Comercial, Servicios, Inmobiliaria, Creativa,
+  Nexo y Ecommerce**.
+- Cada una incluye nombre, descripción, público, beneficios, alcance posible,
+  visual y CTA “Consultar solución” con categoría preseleccionada.
+- Se eliminaron mapa del ecosistema, contadores, guía de estados, badges de
+  desarrollo, “Próximamente”, “Qué está disponible hoy” y roadmap.
 
-### 2.3 Páginas
+### 2.4 ALMATE Nexo
 
-`/`, `/soluciones/`, `/productos/`, `/productos/nexo/`, `/proyectos/`,
-`/nosotros/`, `/contacto/`, `/404.html`. Todas generadas desde `src/pages/*` y
-con un único `<h1>`.
+- Ocho módulos de gestión: stock, inventario, ventas, productos, precios,
+  reportes, administración e integración de procesos.
+- Cada módulo se presenta según el alcance contratado.
+- Sin estados, roadmap ni fechas.
+- Página propia en `/productos/nexo/` con enfoque, módulos y alcance.
 
-### 2.4 ALMATE Assistant
+### 2.5 ALMATE Assistant 2.0
 
 Archivos exactos en `src/components/assistant/`:
 
-- `almate-assistant.js` — motor desacoplado (sin contenido comercial).
-- `almate-assistant.config.js` — contenido, menús, FAQ, intenciones, WhatsApp.
-- `almate-assistant.css` — estilos scopeados en `.aa`.
+- `almate-assistant.js` — motor desacoplado, con `WeakMap` para acciones.
+- `almate-assistant.config.js` — contenido comercial.
+- `almate-assistant.css` — estilos scopeados bajo `.aa`.
 
-Funcionalidad activa: bienvenida, 7 opciones, 6 menús guiados, 11 FAQ,
-reconocimiento por palabras clave con umbral, desambiguación por empate y
-fallback honesto.
+Funcionalidad activa:
+
+- **8 opciones** en el menú principal.
+- **Desarrollo web** (12), **Catálogos/Ecommerce** (10), **Sistemas** (11),
+  **Productos** (6), **Automatización** (7) y **Presupuesto** (6 pasos).
+- **54 preguntas frecuentes** con enlaces, sinónimos y relacionadas.
+- Acciones: `menu`, `intent`, `faq`, `answer`, `links`, `whatsapp`, `href`,
+  `nextMenu`, `followUpOptions`, `capture` y `back`.
+- Matching con tildes, mayúsculas, sinónimos, errores de tipeo, ambigüedad y
+  priorización.
+- Historial de sesión que se conserva al cerrar/abrir el panel y no se envía a
+  ningún servidor.
+- WhatsApp contextual con el tema consultado.
+- Accesibilidad: `role="dialog"`, foco inicial, trampa de foco, `Escape`,
+  `aria-live`, restauración de foco.
+- Respeta `prefers-reduced-motion`.
 
 Módulos desactivados por configuración: `ai`, `catalog`, `priceLookup`,
 `stockLookup`.
 
-Inicialización singleton desde `src/main.js` y API pública
-`window.ALMATEAssistant`.
+### 2.6 Contacto
 
-Sin número de WhatsApp: enlace oculto, aviso “Canal de WhatsApp pendiente de
-configuración” y derivación a `/contacto/`. No hay enlaces rotos.
+- Correo comercial: `almate.digitalstudio@gmail.com`.
+- WhatsApp: `5491134761743` → `https://wa.me/5491134761743`.
+- Header (menú móvil), footer, página de contacto, formulario, botón flotante y
+  assistente usan los mismos datos de `site.config.js`.
+- Mensajes de WhatsApp codificados con `encodeURIComponent`.
+- `api/contact.js`:
+  - Solo `POST` (`405` para otros métodos).
+  - Valida campos y tamaño.
+  - Honeypot `website`.
+  - Rate limit básico en memoria.
+  - Envía por Resend con `fetch`.
+  - Solo responde `200` si Resend confirma.
+  - Devuelve `503` si faltan `RESEND_API_KEY` o `CONTACT_FROM_EMAIL`.
+- El formulario muestra estados de enviando, enviado, validación, servidor,
+  rate limit y no configurado.
 
-### 2.5 Sistema de Instagram
+### 2.7 Portfolio
 
-- 5 plantillas editables: `marca`, `servicios`, `productos`, `educacion`,
-  `proyectos` (`social/*.html` + `social/social.css`).
-- Cada plantilla incluye feed 1080×1350, cuadrado 1080×1080 e historia
-  1080×1920.
-- Export PNG de las cinco piezas: `social/*-feed.png`.
-- `public/og-image.png` 1200×630 regenerada con el logo oficial.
-- Guía en `social/SOCIAL_MEDIA_GUIDELINES.md`.
+- Ocho fichas en `src/data/projects.js` con `cover`, `coverAlt`, `demoUrl`,
+  `category` y `description`.
+- `ProjectCard` usa la captura si existe; si no, muestra una vista conceptual.
+- El botón de demo solo aparece con `demoUrl` real.
+- Estándar de imágenes en `docs/IMAGENES_PORTFOLIO.md`.
+
+### 2.8 Vercel
+
+- `vercel.json` con build `dist`, funciones, `cleanUrls`, `trailingSlash` y
+  cabeceras de seguridad.
+- `VERCEL_DEPLOYMENT.md` con variables, verificación de Resend, dominio y
+  checklist.
+- Preparado, **no desplegado**.
 
 ---
 
 ## 3. Pruebas ejecutadas (reales)
 
-Todas se corrieron en esta máquina (Windows, Node 24.19, npm 11.17,
-Chrome instalado). Ningún resultado de esta sección es estimado.
+Todas se corrieron en esta máquina (Windows, Node 24.19, npm 11.17, Chrome
+instalado). Ningún resultado de esta sección es estimado.
 
 | Comando | Resultado |
 |---|---|
 | `npm run generate` | ✅ 8 páginas + sitemap y robots (7 URLs indexables) |
-| `npm run build` | ✅ Build de Vite correcto (CSS 124.1 kB, JS 61.0 kB) |
-| `npm run verify` | ✅ **0 errores**, 2 advertencias esperadas por `SITE_URL` vacío. 8 páginas revisadas |
-| `npm run check:responsive` | ✅ 8 rutas, viewports 360/390/768/1024/1440, overflow 0, 1 H1 por página, menú móvil abre/cierra, sin errores de consola |
-| `npm run test:assistant` | ✅ **18/18 checks** en Chrome headless vía CDP |
-| `npm run image:og` | ✅ OG 1200×630 + 5 piezas 1080×1350 |
+| `npm run build` | ✅ Build de Vite correcto (CSS 122.2 kB, JS 102.0 kB) |
+| `npm run verify` | ✅ **0 errores**, 3 advertencias (SITE_URL y tamaño de JS) |
+| `npm run test:contact` | ✅ **27/27 checks** con mocks |
+| `npm run test:assistant` | ✅ **45/45 checks** en Chrome headless vía CDP |
+| `npm run check:responsive` | ✅ 8 rutas, 5 viewports, overflow 0, 1 H1, menú móvil, sin errores |
 
 ### 3.1 Checks del asistente
 
-1. Se inyecta una sola instancia.
+1. Instancia única.
 2. API y botón flotante disponibles.
 3. Panel cerrado al cargar.
 4. Mensaje inicial correcto.
-5. Siete opciones iniciales.
-6. WhatsApp sin número: enlace oculto y estado pendiente.
-7. Apertura del panel y estado ARIA.
-8. Menú guiado de desarrollo web.
-9. Opciones del menú y retorno.
-10. Consulta “necesito una web” → Desarrollo web.
-11. Consulta de stock/inventario → Sistemas de gestión.
-12. FAQ de demostraciones.
-13. Fallback sin inventar información.
-14. Enlaces internos/externos seguros.
-15. Cierre con Escape y restauración del estado.
-16. Sin duplicación al navegar a otra página.
-17. Panel dentro del viewport móvil (390×844).
-18. Sin errores de consola.
+5. Ocho opciones iniciales.
+6. Opciones comerciales del menú principal.
+7. WhatsApp configurado en el pie.
+8. Menú inicio: 8 opciones.
+9. Desarrollo web: 12.
+10. Catálogos/Ecommerce: 10.
+11. Sistemas: 11.
+12. Productos: 6.
+13. Automatización: 7.
+14. Presupuesto: 6.
+15. Base FAQ ≥ 40 (54 reales).
+16. Apertura y estado ARIA.
+17. Menú guiado de desarrollo web.
+18. 12 opciones + retorno.
+19. Estado del menú actualizado.
+20. Pila de navegación.
+21. Respuesta con `answer`.
+22. Enlaces en la respuesta.
+23. Opciones relacionadas.
+24. Volver al menú anterior.
+25. Presupuesto paso 1.
+26-30. Presupuesto pasos 2 a 6.
+31. WhatsApp en el paso 6.
+32. Contexto capturado en el mensaje.
+33. Sinónimos.
+34. Stock/inventario.
+35. Precio → presupuesto.
+36. FAQ de demostraciones.
+37. Mayúsculas y tildes.
+38. Fallback honesto.
+39. Opciones del fallback.
+40. Enlaces seguros.
+41. Historial al cerrar/abrir.
+42. Cierre con Escape.
+43. Sin duplicación entre páginas.
+44. Panel dentro del viewport móvil.
+45. Sin errores de consola.
 
-Capturas de referencia: `reports/assistant-panel.png`,
-`reports/assistant-panel-mobile.png`, `reports/responsive/*.png`.
+### 3.2 Checks de contacto
 
-### 3.2 Qué **no** se probó
+- Método incorrecto, configuración faltante, JSON inválido, honeypot,
+  validación, envío exitoso, error del proveedor, fallo de red, rate limit y
+  content-type incorrecto.
+- Verifica que la respuesta no exponga la API key.
+- No realiza envíos reales.
 
-- No hay pruebas en Safari, Firefox ni dispositivos físicos.
-- La navegación móvil se verificó con emulación de Chrome, no con un teléfono.
-- No se ejecutó un test automatizado de lectores de pantalla (NVDA/VoiceOver).
-- No hay pruebas de formulario contra un backend, porque **no existe backend**.
-- No se probó el envío por WhatsApp porque **no hay número configurado**.
+### 3.3 Qué **no** se probó
+
+- Envío real de correo: falta `RESEND_API_KEY` y un remitente verificado.
+- Apertura real de WhatsApp en un teléfono: se verificó la URL y el mensaje,
+  no la entrega.
+- Safari, Firefox y dispositivos físicos.
+- Lectores de pantalla (NVDA/VoiceOver).
+- Capturas y demos reales del portfolio.
+- Despliegue en Vercel, DNS y dominio.
 
 ---
 
@@ -161,13 +230,12 @@ Capturas de referencia: `reports/assistant-panel.png`,
 
 - No se inventaron clientes, precios, plazos, garantías, testimonios,
   resultados, integrantes, certificaciones ni horarios.
-- Los proyectos del portfolio se presentan como **prototipos**, con el aviso
-  “No representa un cliente real”.
-- Cada producto muestra su estado real: `En desarrollo`, `Próximamente`,
-  `Demo no publicada`.
-- El formulario de contacto **no envía nada**: prepara la consulta para que el
-  visitante la copie o la envíe por su propio canal. Se indica explícitamente.
+- Los proyectos del portfolio se presentan como trabajos del ecosistema, no
+  como clientes reales.
+- Las capturas y demos se publican solo cuando son reales y verificables.
+- Productos y Nexo no muestran estados internos ni roadmap.
 - El asistente declara “Asistente por reglas. No es una IA generativa.”
+- El formulario no declara un envío exitoso si el endpoint no lo confirma.
 - No se publican URLs de demo inexistentes (`demoUrl: null`).
 
 ---
@@ -178,31 +246,29 @@ Capturas de referencia: `reports/assistant-panel.png`,
 
 | Pendiente | Impacto | Dónde |
 |---|---|---|
-| Dominio oficial | Canonical, OG y sitemap quedan relativos; `verify` muestra 2 advertencias | `site.url` / `SITE_URL` |
-| Email comercial | No se muestra email directo | `site.email` |
-| WhatsApp | FAB y enlaces de WhatsApp ocultos; assistant muestra “pendiente” | `site.whatsapp.number` |
-| Redes sociales | Footer sin iconos sociales | `site.social` |
-| Capturas reales de proyectos | Tarjetas con visual generado, sin captura real | `src/data/projects.js` |
-| Usuario de Instagram | Piezas dicen “Usuario de Instagram pendiente” | `social/*.html` |
+| Dominio oficial | Canonical, OG y sitemap quedan relativos; `verify` advierte | `site.url` / `VITE_SITE_URL` |
+| `RESEND_API_KEY` | El endpoint responde `503` y no envía correo | Vercel / `.env` local |
+| `CONTACT_FROM_EMAIL` | No hay remitente verificado para Resend | Resend + Vercel |
+| Capturas reales | Tarjetas con vista conceptual | `public/images/projects/` |
+| URLs de demos | No se muestra botón de demo | `demoUrl` en `src/data/projects.js` |
+| Dominio propio | No se puede declarar producción con dominio | Registro + DNS |
 
 ### 5.2 Limitaciones técnicas conocidas
 
-- **Sitio estático**: no hay backend, base de datos ni envío real de
-  formularios.
 - **Asistente por reglas**: no comprende lenguaje libre fuera de las palabras
   clave configuradas; ante la duda responde con el fallback.
+- **Rate limit en memoria**: en serverless es best-effort, no una garantía
+  distribuida.
 - **`npm run check:responsive` requiere `npm run preview`** corriendo (o
-  `PREVIEW_URL` apuntando a un servidor). `npm run test:assistant` no lo
-  requiere: levanta su propio servidor sobre `dist/`.
+  `PREVIEW_URL` apuntando a un servidor).
+- **`npm run test:assistant`** levanta su propio servidor sobre `dist/`.
 - **Chrome/Chromium** es necesario para las pruebas con navegador y para
-  regenerar imágenes. Sin navegador, `image:og` avisa y no rompe el build.
-- **Proyectos con paletas propias**: los mockups de proyectos simulan sitios de
-  terceros y pueden mostrar sus propios acentos; el “chrome” del sitio (header,
-  botones, navegación) se mantiene dentro de la paleta oficial.
-- `public/Descargas/` contiene archivos personales del usuario y **no forma
-  parte del proyecto**; no se tocó.
-- `public/favicon.svg` es un archivo heredado y ya no se referencia; el favicon
-  activo es `favicon-32.png`. Se puede eliminar en una limpieza futura.
+  regenerar imágenes.
+- `public/Descargas/` contiene archivos personales y no forma parte del
+  proyecto; no se tocó.
+- `public/favicon.svg` es un archivo heredado y ya no se referencia.
+- El JS total supera el umbral de advertencia de `verify` (102 kB); no es un
+  error, pero conviene revisarlo si se agregan más módulos.
 
 ---
 
@@ -213,6 +279,7 @@ npm install
 npm run dev            # desarrollo
 npm run build          # build de producción
 npm run verify         # auditoría de dist/
+npm run test:contact   # función de contacto con mocks
 npm run preview        # servidor local (necesario para check:responsive)
 npm run check:responsive
 npm run test:assistant
@@ -221,9 +288,16 @@ npm run test:assistant
 Para publicar con URLs absolutas:
 
 ```bash
-SITE_URL=https://tu-dominio.com npm run build
+VITE_SITE_URL=https://tu-dominio.com npm run build
 npm run verify
 ```
 
-Los pendientes de datos se completan en `src/config/site.config.js`; el resto
-del sitio se adapta solo (enlaces, FAB, assistant, sitemap).
+Para habilitar el correo real:
+
+1. Configurar `RESEND_API_KEY` y `CONTACT_FROM_EMAIL` en Vercel.
+2. Verificar el dominio remitente en Resend.
+3. Enviar una consulta de prueba y confirmar la recepción.
+4. Recién entonces declarar el correo como operativo.
+
+Los datos comerciales viven en `src/config/site.config.js`; el resto del sitio
+se adapta solo (enlaces, FAB, assistente, sitemap).

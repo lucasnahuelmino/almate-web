@@ -1,5 +1,5 @@
 /**
- * Prueba funcional de ALMATE Assistant con Chrome headless vía CDP.
+ * Prueba funcional de ALMATE Assistant 2.0 con Chrome headless vía CDP.
  *
  * Levanta su propio servidor estático sobre `dist/`, así que no hace falta
  * tener `npm run preview` corriendo.
@@ -44,7 +44,7 @@ function startStaticServer() {
     const server = createServer(async (request, response) => {
       try {
         const url = new URL(request.url, 'http://127.0.0.1');
-        let pathname = decodeURIComponent(url.pathname);
+        const pathname = decodeURIComponent(url.pathname);
         let file = join(dist, pathname);
         if (pathname.endsWith('/')) file = join(file, 'index.html');
         if (!extname(file)) file = join(file, 'index.html');
@@ -173,6 +173,16 @@ function print(ok, label, detail = '') {
   if (!ok) process.exitCode = 1;
 }
 
+const EXPECTED_MENUS = {
+  inicio: 8,
+  'desarrollo-web': 12,
+  'catalogos-ecommerce': 10,
+  sistemas: 11,
+  productos: 6,
+  automatizacion: 7,
+  presupuesto: 6,
+};
+
 async function main() {
   const chrome = findChrome();
   if (!chrome) throw new Error('No se encontró Chrome/Chromium.');
@@ -216,6 +226,8 @@ async function main() {
     await evaluate(client, 'document.fonts.ready.then(() => true)', true);
     await sleep(400);
 
+    console.log('\nALMATE Assistant 2.0 · prueba funcional\n');
+
     const boot = await evaluate(
       client,
       `(() => ({
@@ -226,21 +238,43 @@ async function main() {
         hidden: document.querySelector('.aa-panel')?.hidden,
         welcome: document.querySelector('.aa-log')?.textContent || '',
         options: [...document.querySelectorAll('.aa-options .aa-option')].map((button) => button.textContent.trim()),
-        waLink: Boolean(document.querySelector('.aa-foot a.aa-wa')),
-        waPending: Boolean(document.querySelector('.aa-foot .aa-wa--pending'))
+        waLink: document.querySelector('.aa-foot a.aa-wa')?.getAttribute('href') || '',
+        config: window.ALMATEAssistant?.config
       }))()`,
     );
 
-    console.log('\nALMATE Assistant · prueba funcional\n');
     print(boot.instances === 1, 'Se inyecta una sola instancia', `${boot.instances}`);
     print(boot.api && boot.fab, 'API y botón flotante disponibles');
     print(boot.hidden === true && boot.expanded === 'false', 'Panel cerrado al cargar');
     print(boot.welcome.includes('¡Hola! Soy ALMATE Assistant'), 'Mensaje inicial correcto');
-    print(boot.options.length === 7, 'Siete opciones iniciales', boot.options.join(' / '));
-    print(!boot.waLink && boot.waPending, 'WhatsApp sin número: enlace oculto y estado pendiente');
+    print(boot.options.length === 8, 'Ocho opciones iniciales', boot.options.join(' / '));
+    print(
+      boot.options.includes('Quiero preparar un presupuesto') &&
+        boot.options.includes('Quiero hablar con una persona'),
+      'Opciones comerciales del menú principal',
+    );
+    print(
+      boot.waLink.startsWith('https://wa.me/5491134761743?text='),
+      'WhatsApp configurado en el pie del asistente',
+      boot.waLink.slice(0, 48),
+    );
+
+    const counts = await evaluate(
+      client,
+      `(() => {
+        const menus = window.ALMATEAssistant.config.guidedMenus.menus;
+        return Object.fromEntries(Object.entries(menus).map(([id, menu]) => [id, menu.options.length]));
+      })()`,
+    );
+    for (const [menu, expected] of Object.entries(EXPECTED_MENUS)) {
+      print(counts[menu] === expected, `Menú ${menu}: ${expected} opciones`, `${counts[menu]}`);
+    }
+
+    const faqCount = await evaluate(client, 'window.ALMATEAssistant.config.faq.items.length');
+    print(faqCount >= 40, 'Base de preguntas frecuentes (mínimo 40)', `${faqCount} FAQ`);
 
     await evaluate(client, `document.querySelector('.aa-fab').click()`);
-    await sleep(300);
+    await sleep(350);
     const opened = await evaluate(
       client,
       `(() => ({
@@ -256,71 +290,200 @@ async function main() {
       `foco: ${opened.focus}`,
     );
 
+    /* ---- Navegación por menús ---- */
     await evaluate(
       client,
-      `[...document.querySelectorAll('.aa-options .aa-option')].find((button) => button.textContent.includes('página web')).click()`,
+      `[...document.querySelectorAll('.aa-options .aa-option')].find((button) => button.textContent.trim() === 'Quiero una página web').click()`,
     );
     await sleep(250);
     const menu = await evaluate(
       client,
       `(() => ({
         text: document.querySelector('.aa-msg--bot:last-of-type .aa-bubble')?.textContent || '',
-        options: [...document.querySelectorAll('.aa-options .aa-option')].map((button) => button.textContent.trim())
+        options: [...document.querySelectorAll('.aa-options .aa-option')].map((button) => button.textContent.trim()),
+        state: window.ALMATEAssistant.getState()
       }))()`,
     );
     print(menu.text.includes('Desarrollo web'), 'Menú guiado de desarrollo web', menu.text.trim());
     print(
-      menu.options.includes('Sitios institucionales') && menu.options.includes('Volver al inicio'),
-      'Opciones del menú y retorno',
-      `${menu.options.length} opciones`,
+      menu.options.length === 13 &&
+        menu.options.includes('Sitio institucional') &&
+        menu.options.includes('Volver al menú anterior'),
+      '12 opciones + retorno en desarrollo web',
+      `${menu.options.length} botones`,
+    );
+    print(menu.state.currentMenu === 'desarrollo-web', 'Estado del menú actualizado', menu.state.currentMenu);
+    print(
+      menu.state.menuStack.includes('inicio'),
+      'Pila de navegación conserva el menú anterior',
+      menu.state.menuStack.join(' > '),
     );
 
-    await mkdir(join(root, 'reports'), { recursive: true });
-    const shot = await client.send('Page.captureScreenshot', { format: 'png' });
-    await writeFile(join(root, 'reports', 'assistant-panel.png'), Buffer.from(shot.data, 'base64'));
+    /* ---- Respuesta con enlaces y relacionadas ---- */
+    await evaluate(
+      client,
+      `[...document.querySelectorAll('.aa-options .aa-option')].find((button) => button.textContent.trim() === 'Sitio institucional').click()`,
+    );
+    await sleep(300);
+    const answer = await evaluate(
+      client,
+      `(() => ({
+        bot: [...document.querySelectorAll('.aa-msg--bot')].at(-1)?.textContent || '',
+        links: [...document.querySelectorAll('.aa-msg--bot:last-of-type a.aa-link')].map((anchor) => anchor.getAttribute('href')),
+        options: [...document.querySelectorAll('.aa-options .aa-option')].map((button) => button.textContent.trim())
+      }))()`,
+    );
+    print(answer.bot.includes('sitio institucional'), 'Opción con answer renderiza la respuesta');
+    print(answer.links.length >= 1, 'La respuesta incluye enlaces', answer.links.join(' | '));
+    print(
+      answer.options.some((label) => label.includes('¿Qué necesito')),
+      'Opciones relacionadas de seguimiento',
+      answer.options.join(' / '),
+    );
 
-    async function ask(text) {
+    /* ---- Volver ---- */
+    await evaluate(
+      client,
+      `[...document.querySelectorAll('.aa-options .aa-option')].find((button) => button.textContent.trim() === 'Volver al menú anterior').click()`,
+    );
+    await sleep(250);
+    const backState = await evaluate(client, 'window.ALMATEAssistant.getState()');
+    print(backState.currentMenu === 'desarrollo-web', 'Volver regresa al menú anterior', backState.currentMenu);
+
+    /* ---- Presupuesto de 6 pasos ---- */
+    await evaluate(client, `window.ALMATEAssistant.menu('presupuesto')`);
+    await sleep(250);
+    let stepText = await evaluate(
+      client,
+      `document.querySelector('.aa-msg--bot:last-of-type .aa-bubble')?.textContent || ''`,
+    );
+    print(stepText.includes('Paso 1 de 6'), 'Presupuesto comienza en el paso 1', stepText.trim());
+
+    for (let step = 2; step <= 6; step += 1) {
       await evaluate(
         client,
         `(() => {
+          const button = document.querySelector('.aa-options .aa-option');
+          if (!button) return false;
+          button.click();
+          return true;
+        })()`,
+      );
+      await sleep(260);
+      stepText = await evaluate(
+        client,
+        `document.querySelector('.aa-msg--bot:last-of-type .aa-bubble')?.textContent || ''`,
+      );
+      print(stepText.includes(`Paso ${step} de 6`), `Presupuesto avanza al paso ${step}`, stepText.trim());
+    }
+
+    await evaluate(client, `window.open = (url) => { window.__lastOpen = url; return null; }`);
+    await evaluate(
+      client,
+      `(() => {
+        const button = [...document.querySelectorAll('.aa-options .aa-option')].find((item) => item.textContent.includes('WhatsApp'));
+        if (!button) return false;
+        button.click();
+        return true;
+      })()`,
+    );
+    await sleep(250);
+    const waOpened = await evaluate(client, 'window.__lastOpen || ""');
+    print(
+      waOpened.startsWith('https://wa.me/5491134761743?text='),
+      'Paso 6 abre WhatsApp con el resumen de la sesión',
+      waOpened.slice(0, 72),
+    );
+    print(
+      decodeURIComponent(waOpened).includes('Consulta:'),
+      'El mensaje de WhatsApp incluye el contexto capturado',
+    );
+
+    /* ---- Búsqueda por texto: sinónimos, errores y fallback ---- */
+    async function ask(text, wait = 700) {
+      await evaluate(
+        client,
+        `(() => {
+          if (document.querySelector('.aa-panel').hidden) window.ALMATEAssistant.open();
           const input = document.querySelector('.aa-input');
           input.value = ${JSON.stringify(text)};
           document.querySelector('.aa-form').requestSubmit();
           return true;
         })()`,
       );
-      await sleep(650);
+      await sleep(wait);
       return evaluate(
         client,
         `(() => ({
           user: [...document.querySelectorAll('.aa-msg--user .aa-bubble')].at(-1)?.textContent || '',
           bot: [...document.querySelectorAll('.aa-msg--bot')].at(-1)?.textContent || '',
-          links: [...document.querySelectorAll('.aa-msg--bot:last-of-type a.aa-link')].map((a) => a.getAttribute('href'))
+          options: [...document.querySelectorAll('.aa-options .aa-option')].map((button) => button.textContent.trim()),
+          state: window.ALMATEAssistant.getState()
         }))()`,
       );
     }
 
-    const web = await ask('necesito una web');
-    print(web.bot.includes('Desarrollo web'), 'Consulta "necesito una web"', web.bot.slice(0, 70));
+    const typo = await ask('necesito una pagina web para mi negocio');
+    print(
+      typo.state.currentMenu === 'desarrollo-web' || /web|sitio|negocio/i.test(typo.bot),
+      'Consulta con sinónimos reconoce desarrollo web',
+      typo.state.currentMenu,
+    );
 
     const stock = await ask('control de inventario y stock');
-    print(/Nexo Stock|sistemas de gestión/i.test(stock.bot), 'Consulta de stock/inventario', stock.bot.slice(0, 70));
+    const stockText = `${stock.bot} ${stock.options.join(' ')}`;
+    print(
+      stock.state.currentMenu === 'sistemas' || /stock|inventario/i.test(stockText),
+      'Consulta de stock/inventario',
+      stock.state.currentMenu,
+    );
+
+    const price = await ask('cuanto sale una pagina');
+    const priceText = `${price.bot} ${price.options.join(' ')}`;
+    print(
+      price.state.currentMenu === 'presupuesto' || /presupuesto|alcance/i.test(priceText),
+      'Consulta de precio deriva a presupuesto',
+      price.state.currentMenu,
+    );
 
     const faq = await ask('¿Puedo ver demostraciones?');
-    print(/demostraciones|portfolio/i.test(faq.bot), 'FAQ de demostraciones', faq.bot.slice(0, 70));
+    print(/portfolio|demostraciones/i.test(faq.bot), 'FAQ de demostraciones', faq.bot.slice(0, 70));
+
+    const accent = await ask('¿CÓMO SOLICITO UN PRESUPUESTO?');
+    print(/presupuesto/i.test(accent.bot), 'Matching con mayúsculas y tildes', accent.bot.slice(0, 60));
 
     const fallback = await ask('qwerty zxcv placa solar en marte');
     print(
       fallback.bot.includes('No estoy seguro de haber entendido tu consulta'),
       'Respuesta alternativa sin inventar información',
     );
+    print(
+      fallback.options.length > 0,
+      'El fallback ofrece opciones para continuar',
+      fallback.options.join(' / '),
+    );
 
+    /* ---- Enlaces seguros ---- */
     const linksSafe = await evaluate(
       client,
-      `(() => [...document.querySelectorAll('.aa a[href]')].every((a) => /^(https?:|mailto:|tel:|\\/)/.test(a.getAttribute('href'))))()`,
+      `(() => [...document.querySelectorAll('.aa a[href]')].every((anchor) => /^(https?:|mailto:|tel:|\\/)/.test(anchor.getAttribute('href'))))()`,
     );
     print(linksSafe, 'Enlaces internos/externos seguros');
 
+    /* ---- Historial de sesión ---- */
+    const historyBefore = await evaluate(client, 'window.ALMATEAssistant.getState().messages.length');
+    await evaluate(client, `window.ALMATEAssistant.close()`);
+    await sleep(350);
+    await evaluate(client, `window.ALMATEAssistant.open()`);
+    await sleep(350);
+    const historyAfter = await evaluate(client, 'window.ALMATEAssistant.getState().messages.length');
+    print(
+      historyAfter >= historyBefore,
+      'El historial se conserva al cerrar y abrir',
+      `${historyBefore} → ${historyAfter} mensajes`,
+    );
+
+    /* ---- Cierre con Escape ---- */
     await evaluate(
       client,
       `document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`,
@@ -339,6 +502,7 @@ async function main() {
       'Cierre con Escape y restauración del estado',
     );
 
+    /* ---- Sin duplicación al navegar ---- */
     const reloaded = client.waitFor('Page.loadEventFired');
     await client.send('Page.navigate', { url: `${baseUrl}/soluciones/` });
     await reloaded;
@@ -349,7 +513,11 @@ async function main() {
     );
     print(reloadCount === 1, 'Sin duplicación al navegar a otra página', `${reloadCount}`);
 
-    /* Captura del panel en viewport móvil, para revisión visual. */
+    /* ---- Captura móvil ---- */
+    await mkdir(join(root, 'reports'), { recursive: true });
+    const desktopShot = await client.send('Page.captureScreenshot', { format: 'png' });
+    await writeFile(join(root, 'reports', 'assistant-panel.png'), Buffer.from(desktopShot.data, 'base64'));
+
     await client.send('Emulation.setDeviceMetricsOverride', {
       width: 390,
       height: 844,
