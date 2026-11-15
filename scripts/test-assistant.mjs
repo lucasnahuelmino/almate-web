@@ -183,6 +183,250 @@ const EXPECTED_MENUS = {
   presupuesto: 6,
 };
 
+/* ------------------------------------------------------------------ */
+/* Cobertura exhaustiva: configuración, menús, FAQ, typos y reinicio   */
+/* ------------------------------------------------------------------ */
+
+async function staticCoverage() {
+  const { assistantConfig: cfg } = await import('../src/components/assistant/almate-assistant.config.js');
+  const menus = cfg.guidedMenus.menus;
+  const faqIds = new Set(cfg.faq.items.map((item) => item.id));
+  const intents = new Set((cfg.keywordMatching?.intents || []).map((item) => item.id));
+  const problems = [];
+  const hrefs = new Set();
+  let total = 0;
+
+  const check = (where, action) => {
+    total += 1;
+    if (action.href) hrefs.add(action.href);
+    if (action.menu && !menus[action.menu]) problems.push(`${where}: menú inexistente "${action.menu}"`);
+    if (action.faq && !faqIds.has(action.faq)) problems.push(`${where}: FAQ inexistente "${action.faq}"`);
+    if (action.intent && !intents.has(action.intent) && !menus[action.intent]) {
+      problems.push(`${where}: intent inexistente "${action.intent}"`);
+    }
+    if (!action.menu && !action.faq && !action.intent && !action.answer && !action.href && !action.whatsapp && !action.back) {
+      problems.push(`${where}: opción sin acción "${action.label}"`);
+    }
+    (action.followUpOptions || []).forEach((child) => check(`${where} › ${action.label}`, child));
+  };
+
+  for (const [id, menu] of Object.entries(menus)) {
+    for (const option of menu.options) check(`menú ${id}`, option);
+  }
+  for (const item of cfg.faq.items) {
+    for (const suggestion of item.suggestedQuestions || []) {
+      if (typeof suggestion === 'string') {
+        if (!faqIds.has(suggestion)) problems.push(`FAQ ${item.id}: sugerencia sin FAQ "${suggestion}"`);
+      } else {
+        check(`FAQ ${item.id}`, suggestion);
+      }
+    }
+  }
+
+  for (const href of hrefs) {
+    const [pathWithQuery, hash] = href.split('#');
+    const pathPart = pathWithQuery.split('?')[0];
+    const clean = pathPart.replace(/^\/+/, '');
+    const file = clean.endsWith('.html')
+      ? clean
+      : clean
+        ? `${clean.replace(/\/+$/, '')}/index.html`
+        : 'index.html';
+    if (!existsSync(join(dist, file))) {
+      problems.push(`enlace roto ${href} → ${file}`);
+      continue;
+    }
+    if (hash) {
+      const html = await readFile(join(dist, file), 'utf8');
+      if (!html.includes(`id="${hash}"`)) problems.push(`ancla inexistente ${href}`);
+    }
+  }
+
+  return { total, hrefs: hrefs.size, problems };
+}
+
+const COVERAGE_SCRIPT = `(async () => {
+  const api = window.ALMATEAssistant;
+  const cfg = api.config;
+  api.open();
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const bots = () => document.querySelectorAll('.aa-msg--bot').length;
+  const lastBot = () => {
+    const all = document.querySelectorAll('.aa-msg--bot');
+    return (all[all.length - 1]?.textContent || '').replace(/\\s/g, '');
+  };
+  const buttons = () => [...document.querySelectorAll('.aa-options .aa-option')];
+  const labels = () => buttons().map((button) => button.textContent.trim());
+  const isBack = (label) => /^Volver|^Menú principal/.test(label);
+
+  const originalOpen = window.open;
+  const waCalls = [];
+  window.open = (url) => { waCalls.push(String(url)); return null; };
+
+  const failures = [];
+  const stats = { menus: 0, options: 0, children: 0, faqs: 0, related: 0, hrefs: 0, whatsapp: 0, typos: 0 };
+
+  function click(label, where) {
+    const button = buttons().find((item) => item.textContent.trim() === label);
+    if (!button) {
+      failures.push(where + ': botón ausente "' + label + '"');
+      return false;
+    }
+    const before = bots();
+    const waBefore = waCalls.length;
+    button.click();
+    if (waCalls.length > waBefore) stats.whatsapp += 1;
+    if (waCalls.length === waBefore && bots() <= before) {
+      failures.push(where + ': sin respuesta tras "' + label + '"');
+      return false;
+    }
+    return true;
+  }
+
+  function openMenu(menuId) { api.reset(); api.menu(menuId); }
+  function openFaq(id) { api.reset(); api.faq(id); }
+
+  for (const [menuId, menu] of Object.entries(cfg.guidedMenus.menus)) {
+    stats.menus += 1;
+    for (const option of menu.options) {
+      stats.options += 1;
+      const where = 'menú ' + menuId;
+      if (option.href) {
+        stats.hrefs += 1;
+        continue;
+      }
+      openMenu(menuId);
+      if (!click(option.label, where)) continue;
+      if (option.answer && !labels().some(isBack)) {
+        failures.push(where + ': respuesta sin opción de retorno "' + option.label + '"');
+      }
+      for (const child of option.followUpOptions || []) {
+        if (child.href) {
+          stats.hrefs += 1;
+          continue;
+        }
+        openMenu(menuId);
+        if (!click(option.label, where)) break;
+        stats.children += 1;
+        if (!labels().includes(child.label)) {
+          failures.push(where + ': falta la opción encadenada "' + child.label + '" · visibles: ' + labels().join(' / '));
+          continue;
+        }
+        click(child.label, where + ' › ' + option.label);
+      }
+    }
+  }
+
+  for (const item of cfg.faq.items) {
+    if (item.enabled === false) continue;
+    stats.faqs += 1;
+    openFaq(item.id);
+    const probe = (item.answer || '').replace(/\\s/g, '').slice(0, 28);
+    if (!probe || !lastBot().includes(probe)) failures.push('FAQ ' + item.id + ': respuesta no mostrada');
+    if (!labels().length) failures.push('FAQ ' + item.id + ': sin opciones posteriores');
+    for (const related of labels().filter((label) => !isBack(label))) {
+      openFaq(item.id);
+      stats.related += 1;
+      click(related, 'FAQ ' + item.id);
+    }
+  }
+
+  const typos = [
+    ['pagina web', false],
+    ['pajina web', false],
+    ['quiero una pagina web', false],
+    ['presupesto', false],
+    ['presupuseto', false],
+    ['ecomerse', false],
+    ['tienda onlain', false],
+    ['sitema de gestion', false],
+    ['automatisar tareas', false],
+    ['wasap', false],
+    ['hablar con alguien', false],
+    ['portafolio', false],
+    ['xqzwv plmnk', true],
+  ];
+  const fallbackProbe = cfg.fallbackMessage.replace(/\\s/g, '').slice(0, 28);
+  const typoResults = [];
+  for (const [query, expectFallback] of typos) {
+    api.reset();
+    const before = bots();
+    api.ask(query);
+    await wait(420);
+    stats.typos += 1;
+    const fallback = lastBot().includes(fallbackProbe);
+    if (bots() <= before) failures.push('consulta "' + query + '": sin respuesta');
+    if (expectFallback !== fallback) failures.push('consulta "' + query + '": fallback=' + fallback);
+    typoResults.push(query + ' → ' + (fallback ? 'fallback' : api.getState().currentMenu || 'respuesta'));
+  }
+
+  api.reset();
+  api.ask('pagina web');
+  await wait(420);
+  document.querySelector('.aa-reset').click();
+  const userAfterReset = document.querySelectorAll('.aa-msg--user').length;
+  const botsAfterReset = bots();
+  if (userAfterReset !== 0 || botsAfterReset !== 1) {
+    failures.push('reinicio: quedaron ' + userAfterReset + ' mensajes de usuario y ' + botsAfterReset + ' del asistente');
+  }
+
+  window.open = originalOpen;
+  return { stats, failures, typoResults };
+})()`;
+
+async function runCoverage(client) {
+  const statics = await staticCoverage();
+  print(
+    statics.problems.length === 0,
+    `Configuración íntegra: ${statics.total} acciones y ${statics.hrefs} enlaces internos revisados`,
+    statics.problems.slice(0, 3).join(' | '),
+  );
+
+  const report = await evaluate(client, COVERAGE_SCRIPT, true);
+  const { stats, failures, typoResults } = report;
+  print(
+    stats.menus > 0 && stats.options > 0 && failures.filter((item) => item.includes('menú')).length === 0,
+    `Cada opción de los ${stats.menus} menús produce respuesta`,
+    `${stats.options} opciones, ${stats.hrefs} enlaces de navegación`,
+  );
+  print(
+    stats.children > 0 && failures.filter((item) => item.includes('encadenada') || item.includes('›')).length === 0,
+    `Cada subcategoría y respuesta encadenada responde`,
+    `${stats.children} recorridos de segundo nivel`,
+  );
+  print(
+    stats.faqs >= 40 && failures.filter((item) => item.startsWith('FAQ')).length === 0,
+    `Cada pregunta frecuente se abre y responde`,
+    `${stats.faqs} FAQ · ${stats.related} preguntas relacionadas`,
+  );
+  print(
+    stats.whatsapp > 0,
+    `Acciones de WhatsApp disparadas desde el asistente`,
+    `${stats.whatsapp}`,
+  );
+  print(
+    failures.filter((item) => item.startsWith('consulta')).length === 0,
+    `Consultas con errores de tipeo responden (fallback solo en la consulta sin sentido)`,
+    typoResults.join(' · '),
+  );
+  print(
+    !failures.some((item) => item.startsWith('reinicio')),
+    'El botón de reinicio limpia la conversación',
+  );
+
+  const other = failures.filter(
+    (item) =>
+      !item.startsWith('consulta') &&
+      !item.startsWith('reinicio') &&
+      !item.startsWith('FAQ') &&
+      !item.startsWith('menú') &&
+      !item.includes('encadenada') &&
+      !item.includes('›'),
+  );
+  for (const item of failures.slice(0, 80)) console.log(`    · ${item}`);
+  if (other.length) print(false, 'Otras fallas de cobertura', other.slice(0, 3).join(' | '));
+}
+
 async function main() {
   const chrome = findChrome();
   if (!chrome) throw new Error('No se encontró Chrome/Chromium.');
@@ -517,6 +761,8 @@ async function main() {
     await mkdir(join(root, 'reports'), { recursive: true });
     const desktopShot = await client.send('Page.captureScreenshot', { format: 'png' });
     await writeFile(join(root, 'reports', 'assistant-panel.png'), Buffer.from(desktopShot.data, 'base64'));
+
+    await runCoverage(client);
 
     await client.send('Emulation.setDeviceMetricsOverride', {
       width: 390,
