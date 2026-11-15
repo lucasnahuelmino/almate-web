@@ -20,7 +20,7 @@ const categoryNav = serviceCategories
 
 const aside = `<div class="hero-index" aria-label="Resumen de soluciones">
   <div class="hero-index__head">
-    <span class="micro-label">Mapa de soluciones</span>
+    <span class="micro-label">Resumen de soluciones</span>
     <span class="hero-index__count">${allServices.length}</span>
   </div>
   <p class="hero-index__text">Cuatro áreas para resolver desde la presencia digital hasta la operación interna.</p>
@@ -47,7 +47,7 @@ export function SolucionesPage() {
         'Desarrollo web, sistemas de gestión, automatización y herramientas a medida. Cada solución parte de un problema real y se diseña para resolverlo.',
       actions: [
         { label: 'Hablemos de tu proyecto', href: route('/contacto/'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
-        { label: 'Ver el ecosistema', href: route('/productos/'), variant: 'secondary', iconName: 'grid', size: 'large' },
+        { label: 'Explorar productos ALMATE', href: route('/productos/'), variant: 'secondary', iconName: 'grid', size: 'large' },
       ],
       aside,
     })}
