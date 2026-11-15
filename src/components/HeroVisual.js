@@ -58,7 +58,7 @@ export function HeroVisual() {
 
     <div class="hero-stage__badge">
       <span class="hero-stage__badge-dot"></span>
-      Ecosistema en evolución
+      Seis líneas de solución
     </div>
   </div>`;
 }

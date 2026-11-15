@@ -13,6 +13,19 @@ import { escapeAttr } from '../lib/html.js';
  */
 const DARK_SURFACE_VARIANTS = new Set(['header', 'footer']);
 
+/**
+ * Logo completo sobre placa clara. Se usa en superficies oscuras del home
+ * (hero e institucional) para que el arte original #1A1A1A conserve contraste
+ * sin invertirse ni duplicar archivos.
+ */
+export function LogoPlate({ variant = 'hero', loading = 'lazy', className = '' } = {}) {
+  if (!site.logo) return '';
+  const priority = loading === 'eager';
+  return `<span class="logo-plate logo-plate--${variant} ${className}">
+    <img src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" decoding="async"${priority ? ' fetchpriority="high"' : ' loading="lazy"'}>
+  </span>`;
+}
+
 export function Logo({ variant = 'header', tone } = {}) {
   const href = route('/');
   if (site.logo) {

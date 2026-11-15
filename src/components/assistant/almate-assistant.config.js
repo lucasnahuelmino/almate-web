@@ -1000,7 +1000,7 @@ export const assistantConfig = {
         priority: 8,
         menu: null,
         answer:
-          'El portfolio reúne sitios, tiendas y sistemas del ecosistema ALMATE. Cada ficha muestra el tipo de solución y el canal de consulta. Las capturas y demos se publican solo cuando son reales.',
+          'El portfolio reúne sitios, tiendas y sistemas desarrollados por ALMATE. Cada ficha muestra el tipo de solución y el canal de consulta. Las capturas y demos se publican solo cuando son reales.',
         links: [LINK.proyectos],
         followUpOptions: [
           { label: '¿Puedo ver demostraciones?', faq: 'demostraciones' },
@@ -1699,7 +1699,7 @@ export const assistantConfig = {
         priority: 7,
         question: '¿Puedo ver demostraciones?',
         answer:
-          'El portfolio reúne sitios, tiendas y sistemas del ecosistema ALMATE. Las capturas y demos públicas se publican solo cuando son reales; mientras tanto, cada ficha muestra el tipo de solución y el canal para consultar.',
+          'El portfolio reúne sitios, tiendas y sistemas desarrollados por ALMATE. Las capturas y demos públicas se publican solo cuando son reales; mientras tanto, cada ficha muestra el tipo de solución y el canal para consultar.',
         links: [LINK.proyectos],
         keywords: ['ver demostraciones', 'demostraciones', 'demos', 'ejemplos', 'portfolio'],
         synonyms: ['muestras de trabajos', 'ver casos'],

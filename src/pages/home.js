@@ -2,6 +2,7 @@ import { site } from '../config/site.config.js';
 import { AssistantSection } from '../components/AssistantShowcase.js';
 import { Button } from '../components/Button.js';
 import { CTASection } from '../components/CTASection.js';
+import { LogoPlate } from '../components/Logo.js';
 import { EcosystemCard } from '../components/EcosystemCard.js';
 import { HeroVisual } from '../components/HeroVisual.js';
 import { ProcessSteps } from '../components/ProcessSteps.js';
@@ -123,7 +124,7 @@ function NexoSpotlight() {
           </div>
           <div class="btn-group">
             ${Button({ label: 'Conocer Nexo', href: route('/productos/nexo/'), variant: 'secondary', iconName: 'arrow-right' })}
-            ${Button({ label: 'Ver el ecosistema', href: route('/productos/'), variant: 'ghost', iconName: 'grid' })}
+            ${Button({ label: 'Ver las seis líneas', href: route('/productos/'), variant: 'ghost', iconName: 'grid' })}
           </div>
         </div>
         <div class="nexo-spotlight__visual" aria-hidden="true">
@@ -169,9 +170,7 @@ export function HomePage() {
       <div class="container home-hero__inner">
         <div class="home-hero__content">
           <div class="home-hero__brandline">
-            <span class="home-hero__logo-plate">
-              <img src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" decoding="async" fetchpriority="high">
-            </span>
+            ${LogoPlate({ variant: 'hero', loading: 'eager', className: 'home-hero__logo-plate' })}
             <span class="home-hero__brandtext">Digital Studio</span>
           </div>
           <p class="hero-kicker"><span class="hero-kicker__dot" aria-hidden="true"></span> Ideas · Diseño · Tecnología</p>
@@ -230,7 +229,7 @@ export function HomePage() {
             index: '02',
             title: 'Prototipos que muestran el método.',
             intro:
-              'Una selección de sitios y sistemas desarrollados dentro del ecosistema ALMATE. Son demostraciones de trabajo, no casos de clientes reales.',
+              'Una selección de sitios y sistemas desarrollados por ALMATE. Son demostraciones de trabajo, no casos de clientes reales.',
             id: 'projects-title',
           })}
           ${Button({ label: 'Ver todos los proyectos', href: route('/proyectos/'), variant: 'ghost', iconName: 'arrow-right' })}
@@ -329,9 +328,7 @@ export function HomePage() {
     <section class="section section--institutional theme-light" id="institucional" aria-labelledby="institutional-title">
       <div class="container institutional">
         <div class="institutional__brand">
-          <span class="institutional__logo-plate">
-            <img src="${escapeAttr(asset(site.logo))}" width="${site.logoWidth}" height="${site.logoHeight}" alt="${escapeAttr(site.logoAlt)}" loading="lazy" decoding="async">
-          </span>
+          ${LogoPlate({ variant: 'institutional', className: 'institutional__logo-plate' })}
           <p class="institutional__signature">ALMATE · Digital Studio</p>
           <p class="institutional__status">${escapeHtml(site.institutional.status)}</p>
         </div>

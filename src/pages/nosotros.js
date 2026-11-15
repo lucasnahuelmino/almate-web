@@ -63,7 +63,7 @@ export function NosotrosPage() {
         'ALMATE es una marca de soluciones digitales que diseña y desarrolla productos, sitios y herramientas para comercios, profesionales y empresas.',
       actions: [
         { label: 'Hablemos de tu proyecto', href: route('/contacto/'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
-        { label: 'Conocer el ecosistema', href: route('/productos/'), variant: 'secondary', iconName: 'grid', size: 'large' },
+        { label: 'Explorar soluciones', href: route('/soluciones/'), variant: 'secondary', iconName: 'grid', size: 'large' },
       ],
       aside,
     })}

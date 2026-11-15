@@ -22,7 +22,7 @@ export function ProyectosPage() {
       eyebrow: 'Proyectos',
       title: 'Trabajo real, mostrado con <span class="text-gradient">transparencia</span>.',
       description:
-        'Una selección de sitios, tiendas y sistemas desarrollados dentro del ecosistema ALMATE. Cada ficha muestra el tipo de solución y el canal para consultar. Las capturas y demos se publican solo cuando son reales.',
+        'Una selección de sitios, tiendas y sistemas desarrollados por ALMATE. Cada ficha muestra el tipo de solución y el canal para consultar. Las capturas y demos se publican solo cuando son reales.',
       actions: [
         { label: 'Hablemos de tu proyecto', href: route('/contacto/'), variant: 'primary', iconName: 'arrow-up-right', size: 'large' },
         { label: 'Ver soluciones', href: route('/soluciones/'), variant: 'secondary', iconName: 'code', size: 'large' },
@@ -35,7 +35,7 @@ export function ProyectosPage() {
         <div class="portfolio-head">
           <div>
             <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">Selección de proyectos</span></p>
-            <h2 class="portfolio-head__title" id="portfolio-title">Proyectos del ecosistema.</h2>
+            <h2 class="portfolio-head__title" id="portfolio-title">Proyectos y demostraciones.</h2>
             <p class="portfolio-head__description">
               Sitios comerciales, tiendas, portfolios y sistemas de gestión. Las vistas conceptuales se reemplazan por capturas reales a medida que cada proyecto queda preparado. Las demos se abren en una pestaña nueva cuando están publicadas.
             </p>
@@ -80,7 +80,7 @@ export function ProyectosPage() {
       eyebrow: 'Tu proyecto',
       title: 'El próximo prototipo puede ser tu idea.',
       description:
-        'Contanos qué necesitás construir o mejorar. Si encaja con el ecosistema, evaluamos el mejor camino para empezar.',
+        'Contanos qué necesitás construir o mejorar. Si encaja con lo que hacemos, evaluamos el mejor camino para empezar.',
       primary: {
         label: 'Hablemos de tu proyecto',
         href: route('/contacto/'),
@@ -111,7 +111,7 @@ export function ProyectosPage() {
       collectionSchema({
         name: 'Proyectos ALMATE',
         description:
-          'Selección de prototipos y productos del ecosistema ALMATE.',
+          'Selección de prototipos y productos de ALMATE.',
         path: '/proyectos/',
         items: projects.map((project) => ({
           name: project.name,

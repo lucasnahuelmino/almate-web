@@ -205,7 +205,7 @@ export const projects = [
     coverFile: 'cuarto-menguante.webp',
     demoUrl: null,
     cta: 'Consultar por este proyecto',
-    disclaimer: 'Proyecto del ecosistema. La demo pública se habilita cuando exista una URL verificable.',
+    disclaimer: 'Proyecto desarrollado por ALMATE. La demo pública se habilita cuando exista una URL verificable.',
     visual: {
       theme: 'midnight',
       label: 'Música',

@@ -52,7 +52,7 @@ export function Footer() {
           <ul class="footer__links">${footerLinks(site.navigation)}</ul>
         </div>
         <div class="footer__column">
-          <h3 class="footer__heading">Ecosistema</h3>
+          <h3 class="footer__heading">Soluciones</h3>
           <ul class="footer__links">
             <li><a href="${route('/productos/#comercial')}">ALMATE Comercial</a></li>
             <li><a href="${route('/productos/#servicios')}">ALMATE Servicios</a></li>
