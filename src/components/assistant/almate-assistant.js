@@ -92,7 +92,7 @@ function isFuzzyToken(token, keyword) {
   if (keyword.length < 5 || token.length < 4) return false;
   if (token[0] !== keyword[0]) return false;
   if (Math.abs(token.length - keyword.length) > 2) return false;
-  const allowed = keyword.length >= 8 ? 2 : 1;
+  const allowed = keyword.length >= 6 ? 2 : 1;
   return editDistance(token, keyword) <= allowed;
 }
 
@@ -116,6 +116,9 @@ function termsOf(item) {
 /* Reconocimiento de texto                                             */
 /* ------------------------------------------------------------------ */
 
+/* Una coincidencia aproximada (error de tipeo) alcanza el umbral mínimo. */
+const FUZZY_SCORE = 3;
+
 function scoreKeywords(text, keywords = []) {
   const normalizedText = ` ${normalize(text)} `;
   const tokens = tokenize(text);
@@ -126,7 +129,11 @@ function scoreKeywords(text, keywords = []) {
     if (!keyword) continue;
 
     if (keyword.includes(' ')) {
-      if (normalizedText.includes(` ${keyword} `)) score += 5 + keyword.split(' ').length;
+      if (normalizedText.includes(` ${keyword} `)) {
+        score += 5 + keyword.split(' ').length;
+      } else if (keyword.split(' ').every((part) => tokens.some((token) => tokenMatches(token, part)))) {
+        score += FUZZY_SCORE;
+      }
       continue;
     }
 
@@ -136,7 +143,7 @@ function scoreKeywords(text, keywords = []) {
     }
 
     if (tokens.some((token) => tokenMatches(token, keyword))) {
-      score += 2;
+      score += FUZZY_SCORE;
     }
   }
 

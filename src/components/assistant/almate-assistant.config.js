@@ -1040,7 +1040,7 @@ export const assistantConfig = {
           'email',
           'horario',
         ],
-        synonyms: ['hablar con alguien', 'comunicarme', 'escribirles', 'atencion'],
+        synonyms: ['hablar con alguien', 'comunicarme', 'escribirles', 'atencion', 'wasap', 'wapp'],
       },
       {
         id: 'empresa',
