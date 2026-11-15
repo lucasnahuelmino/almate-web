@@ -1,7 +1,7 @@
 # Estado del proyecto — ALMATE · Digital Studio
 
-Última actualización: **14 de noviembre de 2026**
-Rama: `main` · Cambios locales listos para commit
+Última actualización: **15 de noviembre de 2026**
+Rama: `main` · sincronizada con `origin/main`. No desplegada en Vercel.
 
 Este documento refleja el estado **real y verificado** del repositorio. No
 incluye funcionalidades planeadas como si estuvieran hechas.
@@ -23,11 +23,11 @@ portfolio preparado para capturas.
 | Páginas internas (7 + 404) | ✅ Implementadas y verificadas |
 | Seis líneas comerciales contratables | ✅ Implementadas |
 | ALMATE Nexo como soluciones de gestión | ✅ Implementado sin estados ni roadmap |
-| ALMATE Assistant 2.0 | ✅ Implementado y probado (45 checks) |
+| ALMATE Assistant 2.0 | ✅ Implementado, presentado en `/assistant/` y probado (52 checks + cobertura exhaustiva) |
 | WhatsApp comercial real | ✅ Integrado y verificado en HTML |
 | Formulario + `api/contact.js` (Resend) | ✅ Implementado y probado con mocks |
 | Envío real de correo | ⚠️ Pendiente de claves y remitente |
-| Portfolio preparado para capturas | ✅ Estructura y documentación listas |
+| Portfolio preparado para capturas | ✅ Estructura, placeholders e inventario en `docs/IMAGENES_PORTFOLIO.md` |
 | Capturas y demos reales | ⚠️ Pendientes |
 | SEO técnico | ⚠️ Completo con URL relativa (falta dominio) |
 | Configuración Vercel | ✅ Documentada, sin desplegar |
@@ -112,6 +112,19 @@ Funcionalidad activa:
 Módulos desactivados por configuración: `ai`, `catalog`, `priceLookup`,
 `stockLookup`.
 
+Presentación comercial (`/assistant/` y sección en Inicio):
+
+- Página propia con modalidades **Basic** (disponible, sin IA ni costos de
+  consumo) e **IA Comercial** (evolución futura; requiere integración con los
+  sistemas del negocio). No se presenta IA Comercial como funcionalidad vigente.
+- Demostración que reutiliza el motor real: los atajos `data-assistant-open`,
+  `data-assistant-menu` y `data-assistant-ask` llaman a `window.ALMATEAssistant`.
+  No hay una segunda implementación ni API externa.
+- Botón de reinicio (`reset()`) en el panel.
+- Tolerancia a errores de tipeo: una coincidencia aproximada alcanza el umbral y
+  las keywords compuestas admiten errores por palabra. Ambigüedades muestran hasta
+  tres caminos en lugar de quedar sin respuesta.
+
 ### 2.6 Contacto
 
 - Correo comercial: `almate.digitalstudio@gmail.com`.
@@ -158,8 +171,8 @@ instalado). Ningún resultado de esta sección es estimado.
 | `npm run generate` | ✅ 8 páginas + sitemap y robots (7 URLs indexables) |
 | `npm run build` | ✅ Build de Vite correcto (CSS 122.2 kB, JS 102.0 kB) |
 | `npm run verify` | ✅ **0 errores**, 3 advertencias (SITE_URL y tamaño de JS) |
-| `npm run test:contact` | ✅ **27/27 checks** con mocks |
-| `npm run test:assistant` | ✅ **45/45 checks** en Chrome headless vía CDP |
+| `npm run test:contact` | ✅ **27/27 checks** con Resend simulado (no es envío real) |
+| `npm run test:assistant` | ✅ **52/52 checks** en Chrome headless vía CDP, con cobertura de 84 opciones, 47 recorridos encadenados, 54 FAQ y 13 consultas con errores de tipeo |
 | `npm run check:responsive` | ✅ 8 rutas, 5 viewports, overflow 0, 1 H1, menú móvil, sin errores |
 
 ### 3.1 Checks del asistente
@@ -206,6 +219,20 @@ instalado). Ningún resultado de esta sección es estimado.
 44. Panel dentro del viewport móvil.
 45. Sin errores de consola.
 
+### 3.1b Cobertura exhaustiva del assistant
+
+- Configuración: 182 acciones revisadas (menús, subcategorías, FAQ, intents,
+  seguimientos) y 20 enlaces internos con su ancla verificados contra `dist/`.
+- Navegador: cada opción de los 13 menús se clickea y debe producir respuesta; cada
+  opción con seguimiento se recorre en segundo nivel (47 recorridos); cada una de
+  las 54 FAQ se abre, muestra su respuesta y se recorren sus 160 relacionadas.
+- Enlaces de navegación (`href`) se validan sin navegar; las acciones de WhatsApp
+  se interceptan y se cuentan (6).
+- 13 consultas con errores de tipeo (`pagina web`, `presupesto`, `ecomerse`,
+  `wasap`, `tienda onlain`, etc.) deben responder. Solo la consulta sin sentido
+  debe caer en el fallback.
+- El reinicio limpia la conversación.
+
 ### 3.2 Checks de contacto
 
 - Método incorrecto, configuración faltante, JSON inválido, honeypot,
@@ -213,6 +240,18 @@ instalado). Ningún resultado de esta sección es estimado.
   content-type incorrecto.
 - Verifica que la respuesta no exponga la API key.
 - No realiza envíos reales.
+
+### 3.4 Correcciones de esta fase
+
+- Logo: el hero y la sección institucional usan `LogoPlate` (`src/components/Logo.js`)
+  en lugar de markup directo. El arte original no se redibujó ni se invirtió.
+- Copys: se retiró `ecosistema` de footer, inicio, nosotros, proyectos, HeroVisual
+  y del portfolio. El CTA «Ver el ecosistema» ahora es «Explorar soluciones» o
+  «Ver las seis líneas».
+- Assistant: typos que caían en fallback (`presupesto`, `ecomerse`, `wasap`,
+  `tienda onlain`, `automatisar tareas`) ahora responden.
+- Portfolio: documento `docs/IMAGENES_PORTFOLIO.md` con inventario, resolución,
+  página de uso y capturas adicionales.
 
 ### 3.3 Qué **no** se probó
 
@@ -230,8 +269,8 @@ instalado). Ningún resultado de esta sección es estimado.
 
 - No se inventaron clientes, precios, plazos, garantías, testimonios,
   resultados, integrantes, certificaciones ni horarios.
-- Los proyectos del portfolio se presentan como trabajos del ecosistema, no
-  como clientes reales.
+- Los proyectos del portfolio se presentan como demostraciones de trabajo de
+  ALMATE, no como clientes reales.
 - Las capturas y demos se publican solo cuando son reales y verificables.
 - Productos y Nexo no muestran estados internos ni roadmap.
 - El asistente declara “Asistente por reglas. No es una IA generativa.”
@@ -248,6 +287,8 @@ instalado). Ningún resultado de esta sección es estimado.
 |---|---|---|
 | Dominio oficial | Canonical, OG y sitemap quedan relativos; `verify` advierte | `site.url` / `VITE_SITE_URL` |
 | `RESEND_API_KEY` | El endpoint responde `503` y no envía correo | Vercel / `.env` local |
+| Favicon en pestañas oscuras | El isotipo original es oscuro; puede perder contraste en pestañas con tema oscuro. No se reemplazó sin revisión | `public/favicon-32.png` |
+| Demos del assistant con datos reales | El assistant responde con el contenido configurado; no tiene integración de stock ni precios (IA Comercial es evolución futura) | `almate-assistant.config.js` |
 | `CONTACT_FROM_EMAIL` | No hay remitente verificado para Resend | Resend + Vercel |
 | Capturas reales | Tarjetas con vista conceptual | `public/images/projects/` |
 | URLs de demos | No se muestra botón de demo | `demoUrl` en `src/data/projects.js` |

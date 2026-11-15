@@ -263,8 +263,8 @@ Reglas aplicadas en todo el sitio:
 
 - No se inventan clientes, precios, plazos, garantías, testimonios, resultados,
   integrantes, certificaciones, horarios ni URLs.
-- Los proyectos del portfolio se presentan como trabajos del ecosistema, no
-  como clientes reales.
+- Los proyectos del portfolio se presentan como demostraciones de trabajo de
+  ALMATE, no como clientes reales.
 - Las capturas y demos se publican solo cuando son reales y verificables.
 - Los productos y Nexo no muestran estados internos ni roadmap.
 - El asistente aclara que es un sistema por reglas.

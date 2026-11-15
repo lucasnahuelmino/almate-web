@@ -97,6 +97,8 @@ npm run test:contact
 
 `npm run test:contact` usa mocks y no envía correos reales.
 `npm run check:responsive` requiere `npm run preview` en otra terminal.
+`npm run test:assistant` abre Chrome con depuración; si el puerto 9334 está
+ocupado, usar `CDP_PORT=9336 npm run test:assistant`.
 
 ## 8. Checklist de salida a producción
 
