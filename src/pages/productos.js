@@ -89,6 +89,10 @@ export function ProductosPage() {
 
     ${productFamilies.map((family) => familySection(family)).join('')}
 
+    <div class="container">
+      <p class="product-credit">${icon('check-circle')} <span>Desarrollado por ALMATE · Soluciones digitales.</span></p>
+    </div>
+
     <section class="section section--built-to-grow" aria-labelledby="grow-title">
       <div class="container">
         <div class="grow-panel" data-reveal>

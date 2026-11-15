@@ -1062,6 +1062,189 @@
   padding-top: 4px;
 }
 
+/* ---------------------------------------------------------------
+   Ficha comercial de línea ALMATE
+--------------------------------------------------------------- */
+.family-section .product-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.product-card--family .product-card__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: stretch;
+}
+
+.product-card--family .product-card__media-link {
+  height: 100%;
+  min-height: 330px;
+}
+
+.product-card--family .product-card__media {
+  height: 100%;
+  min-height: 330px;
+  aspect-ratio: auto;
+  border-right: 1px solid var(--color-border-soft);
+  border-bottom: 0;
+}
+
+.product-card--family .product-card__body {
+  padding: clamp(1.4rem, 2.6vw, 2.2rem);
+}
+
+.product-card__tagline {
+  margin-bottom: 10px;
+  color: var(--color-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.product-card__facts {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 16px;
+}
+
+.product-card__facts p {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.product-card--family .product-card__features {
+  gap: 7px;
+}
+
+.product-card__details {
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.product-card__detail {
+  border-bottom: 1px solid var(--color-border-soft);
+  background: rgba(26, 26, 26, 0.18);
+}
+
+.product-card__detail summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px clamp(1.4rem, 2.6vw, 2.2rem);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+
+.product-card__detail summary::-webkit-details-marker {
+  display: none;
+}
+
+.product-card__detail summary::after {
+  content: '+';
+  color: var(--theme-accent);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.product-card__detail[open] summary::after {
+  content: '−';
+}
+
+.product-card__detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 0 clamp(1.4rem, 2.6vw, 2.2rem) 18px;
+}
+
+.product-card__detail-block {
+  min-width: 0;
+}
+
+.product-card__detail-list {
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.product-card__detail-list li {
+  position: relative;
+  padding-left: 14px;
+  color: var(--color-muted-2);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.product-card__detail-list li::before {
+  content: '';
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+}
+
+.product-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.product-card__chips li {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.product-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px clamp(1.4rem, 2.6vw, 2.2rem);
+}
+
+.product-card__footer .product-card__note {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+.product-card__footer .text-link {
+  margin-left: auto;
+}
+
+.product-credit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 28px;
+  color: var(--color-muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.product-credit .icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-cyan);
+}
+
+
 .product-visual {
   position: relative;
   width: 100%;
@@ -2251,6 +2434,25 @@
     grid-template-columns: 1fr;
   }
 
+  .product-card--family .product-card__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card--family .product-card__media-link {
+    min-height: 0;
+  }
+
+  .product-card--family .product-card__media {
+    min-height: 0;
+    aspect-ratio: 16 / 9.6;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .product-card__detail-grid {
+    grid-template-columns: 1fr;
+  }
+
   .product-grid--single {
     grid-template-columns: 1fr;
   }
@@ -2288,6 +2490,10 @@
   }
 
   .project-card__actions .text-link {
+    margin-left: 0;
+  }
+
+  .product-card__footer .text-link {
     margin-left: 0;
   }
 
