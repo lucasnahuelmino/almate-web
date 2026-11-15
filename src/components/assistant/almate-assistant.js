@@ -237,6 +237,9 @@ export function initAssistant(userConfig = {}) {
         <strong id="aa-title">${safeText(config.assistantName)}</strong>
         <span class="aa-status"><i aria-hidden="true"></i>${safeText(config.branding.statusLabel)}</span>
       </div>
+      <button type="button" class="aa-reset" aria-label="Reiniciar conversación" title="Reiniciar conversación">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 11a8 8 0 1 1 2.3 6.1"/><path d="M4 5v6h6"/></svg>
+      </button>
       <button type="button" class="aa-close" aria-label="Cerrar ${safeText(config.assistantName)}">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
@@ -262,6 +265,7 @@ export function initAssistant(userConfig = {}) {
   const form = panel.querySelector('.aa-form');
   const input = panel.querySelector('.aa-input');
   const closeButton = panel.querySelector('.aa-close');
+  const resetButton = panel.querySelector('.aa-reset');
   const foot = panel.querySelector('.aa-foot');
 
   let previousFocus = null;
@@ -269,6 +273,7 @@ export function initAssistant(userConfig = {}) {
   let menuStack = [];
   let lastUserMessage = '';
   let messageCount = 0;
+  let responseTimer = null;
   let destroyed = false;
   const sessionContext = [];
   const actionStore = new WeakMap();
@@ -770,11 +775,37 @@ export function initAssistant(userConfig = {}) {
 
     const typing = addTyping();
     const delay = prefersReducedMotion() ? 40 : 300;
-    window.setTimeout(() => {
+    if (responseTimer) window.clearTimeout(responseTimer);
+    responseTimer = window.setTimeout(() => {
+      responseTimer = null;
       if (destroyed) return;
       typing.remove();
       respondToText(lastUserMessage);
     }, delay);
+  }
+
+  /* Reinicia la conversación sin recargar la página ni duplicar el motor. */
+  function reset() {
+    if (responseTimer) {
+      window.clearTimeout(responseTimer);
+      responseTimer = null;
+    }
+    log.replaceChildren();
+    options.replaceChildren();
+    options.hidden = true;
+    currentMenu = rootId;
+    menuStack = [];
+    sessionContext.splice(0, sessionContext.length);
+    lastUserMessage = '';
+    messageCount = 0;
+    input.value = '';
+    addMessage('bot', config.welcomeMessage);
+    renderFooter();
+    if (config.behavior.showInitialOptions && config.guidedMenus?.enabled !== false) {
+      const rootMenu = config.guidedMenus.menus?.[rootId];
+      if (rootMenu) renderOptions(rootMenu.options || []);
+    }
+    input.focus({ preventScroll: true });
   }
 
   /* ----------------------- Abrir / cerrar ----------------------- */
@@ -823,6 +854,7 @@ export function initAssistant(userConfig = {}) {
 
   fab.addEventListener('click', toggle);
   closeButton.addEventListener('click', close);
+  resetButton.addEventListener('click', reset);
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -885,6 +917,7 @@ export function initAssistant(userConfig = {}) {
     menu: openMenu,
     faq: respondFaq,
     ask: handleUserMessage,
+    reset,
     buildWhatsAppUrl: whatsappUrl,
     getState() {
       return {
@@ -896,6 +929,7 @@ export function initAssistant(userConfig = {}) {
     },
     destroy() {
       destroyed = true;
+      if (responseTimer) window.clearTimeout(responseTimer);
       panel.removeEventListener('keydown', onPanelKeydown);
       document.removeEventListener('keydown', onDocumentKeydown);
       root.remove();

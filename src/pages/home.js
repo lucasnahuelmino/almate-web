@@ -1,4 +1,5 @@
 import { site } from '../config/site.config.js';
+import { AssistantSection } from '../components/AssistantShowcase.js';
 import { Button } from '../components/Button.js';
 import { CTASection } from '../components/CTASection.js';
 import { EcosystemCard } from '../components/EcosystemCard.js';
@@ -264,6 +265,12 @@ export function HomePage() {
         </aside>
       </div>
     </section>
+
+    ${AssistantSection({
+      variant: 'teaser',
+      id: 'asistente',
+      headingId: 'asistente-home-title',
+    })}
 
     ${NexoSpotlight()}
 

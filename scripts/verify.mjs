@@ -22,6 +22,7 @@ const pages = [
   { file: 'soluciones/index.html', route: '/soluciones/', name: 'Soluciones' },
   { file: 'productos/index.html', route: '/productos/', name: 'Productos' },
   { file: 'productos/nexo/index.html', route: '/productos/nexo/', name: 'Nexo' },
+  { file: 'assistant/index.html', route: '/assistant/', name: 'Assistant' },
   { file: 'proyectos/index.html', route: '/proyectos/', name: 'Proyectos' },
   { file: 'nosotros/index.html', route: '/nosotros/', name: 'Nosotros' },
   { file: 'contacto/index.html', route: '/contacto/', name: 'Contacto' },

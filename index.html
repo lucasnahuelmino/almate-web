@@ -54,6 +54,10 @@
           <span>Productos</span>
         </a>
       </li><li>
+        <a class="nav-link" href="/assistant/">
+          <span>Assistant</span>
+        </a>
+      </li><li>
         <a class="nav-link" href="/proyectos/">
           <span>Proyectos</span>
         </a>
@@ -94,6 +98,10 @@
           <span>Productos</span>
         </a>
       </li><li>
+        <a class="nav-link" href="/assistant/">
+          <span>Assistant</span>
+        </a>
+      </li><li>
         <a class="nav-link" href="/proyectos/">
           <span>Proyectos</span>
         </a>
@@ -130,6 +138,10 @@
       </li><li class="mobile-nav__item">
         <a class="nav-link" href="/productos/">
           <span>Productos</span>
+        </a>
+      </li><li class="mobile-nav__item">
+        <a class="nav-link" href="/assistant/">
+          <span>Assistant</span>
         </a>
       </li><li class="mobile-nav__item">
         <a class="nav-link" href="/proyectos/">
@@ -590,6 +602,66 @@
       </div>
     </section>
 
+    <section class="section section--assistant" id="asistente" aria-labelledby="asistente-home-title">
+    <div class="container">
+      <div class="assistant-layout">
+        <div class="assistant-layout__intro" data-reveal>
+          <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span><span class="eyebrow__text">ALMATE Assistant</span></p>
+          <h2 class="assistant-layout__title" id="asistente-home-title">Un assistant que responde antes de la consulta.</h2>
+          <p class="assistant-layout__lead">Menús guiados, preguntas frecuentes y derivación a WhatsApp en una misma experiencia. Funciona con reglas y contenido propio, sin costos de IA.</p>
+          <ul class="check-list check-list--wide">
+            <li>8 opciones y 54 respuestas frecuentes.</li><li>Palabras clave, sinónimos y navegación por categorías.</li><li>Derivación a WhatsApp y contacto con contexto.</li>
+          </ul>
+          <div class="btn-group">
+            <button type="button" class="btn btn--primary" data-assistant-open>
+              <span class="btn__label">Probar el assistant</span>
+              <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z"/><path d="M19 16v5"/><path d="M16.5 18.5h5"/></svg></span>
+            </button>
+            <a class="btn btn--secondary" href="/assistant/"><span class="btn__label">Conocer el Assistant</span><span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></span></a>
+          </div>
+          <p class="assistant-layout__note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6l-8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg> Asistente por reglas. No es una IA generativa y no envía conversaciones a servidores externos.</p>
+        </div>
+        <div class="assistant-layout__demo" data-reveal>
+          <div class="assistant-mock" id="asistente-demo" aria-label="Demostración del ALMATE Assistant">
+    <div class="assistant-mock__head">
+      <span class="assistant-mock__avatar" aria-hidden="true">
+        <img src="/logo_a_almate.png" alt="" width="160" height="160" loading="lazy" decoding="async">
+      </span>
+      <div class="assistant-mock__identity">
+        <strong>ALMATE Assistant</strong>
+        <span><i aria-hidden="true"></i>Asistente virtual · Orientación</span>
+      </div>
+      <span class="assistant-mock__badge">Demo</span>
+    </div>
+
+    <div class="assistant-mock__log">
+      <div class="assistant-mock__message assistant-mock__message--bot">
+    <div class="assistant-mock__bubble"><p>¡Hola! Soy ALMATE Assistant. Te ayudo a encontrar la solución que mejor se adapta a tu negocio.</p></div>
+  </div><div class="assistant-mock__message assistant-mock__message--user">
+    <div class="assistant-mock__bubble"><p>Necesito un catálogo para mi ferretería.</p></div>
+  </div><div class="assistant-mock__message assistant-mock__message--bot">
+    <div class="assistant-mock__bubble"><p>Un catálogo digital ordena productos y categorías, y permite recibir consultas por WhatsApp. Si más adelante lo necesitás, puede evolucionar a una tienda online.</p></div>
+  </div>
+    </div>
+
+    <div class="assistant-mock__quick" aria-label="Consultas de demostración">
+      <span class="assistant-mock__quick-label">Probá una consulta real</span>
+      <button type="button" class="assistant-mock__chip" data-assistant-demo data-assistant-menu="desarrollo-web">Quiero una página web</button><button type="button" class="assistant-mock__chip" data-assistant-demo data-assistant-ask="Necesito un sistema de gestión">Necesito un sistema de gestión</button><button type="button" class="assistant-mock__chip" data-assistant-demo data-assistant-ask="¿Cómo pido un presupuesto?">¿Cómo pido un presupuesto?</button>
+    </div>
+
+    <div class="assistant-mock__foot">
+      <button type="button" class="btn btn--primary btn--small" data-assistant-open>
+        <span class="btn__label">Abrir el assistant</span>
+        <span class="btn__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+      </button>
+      <p>Las opciones abren el asistente real de esta web. No se envía información a servicios externos.</p>
+    </div>
+  </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
     <section class="nexo-spotlight" aria-labelledby="nexo-spotlight-title">
     <div class="container">
       <div class="nexo-spotlight__panel" data-reveal>
@@ -832,7 +904,7 @@
       <div class="footer__columns">
         <div class="footer__column">
           <h3 class="footer__heading">Navegación</h3>
-          <ul class="footer__links"><li><a href="/">Inicio</a></li><li><a href="/soluciones/">Soluciones</a></li><li><a href="/productos/">Productos</a></li><li><a href="/proyectos/">Proyectos</a></li><li><a href="/nosotros/">Nosotros</a></li><li><a href="/contacto/">Contacto</a></li></ul>
+          <ul class="footer__links"><li><a href="/">Inicio</a></li><li><a href="/soluciones/">Soluciones</a></li><li><a href="/productos/">Productos</a></li><li><a href="/assistant/">Assistant</a></li><li><a href="/proyectos/">Proyectos</a></li><li><a href="/nosotros/">Nosotros</a></li><li><a href="/contacto/">Contacto</a></li></ul>
         </div>
         <div class="footer__column">
           <h3 class="footer__heading">Ecosistema</h3>

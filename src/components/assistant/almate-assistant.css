@@ -184,7 +184,6 @@ body.aa-is-open .contact-fab {
   place-items: center;
   width: 36px;
   height: 36px;
-  margin-left: auto;
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
@@ -201,6 +200,29 @@ body.aa-is-open .contact-fab {
   color: var(--color-text);
 }
 
+.aa-reset {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-muted);
+  transition:
+    color var(--transition),
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.aa-reset:hover {
+  border-color: var(--color-border);
+  background: var(--almate-carbon);
+  color: var(--color-text);
+}
+
+.aa-reset:focus-visible,
 .aa-close:focus-visible,
 .aa-option:focus-visible,
 .aa-send:focus-visible,

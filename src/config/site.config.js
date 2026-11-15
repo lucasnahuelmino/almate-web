@@ -115,6 +115,7 @@ export const site = {
     { label: 'Inicio', href: '/' },
     { label: 'Soluciones', href: '/soluciones/' },
     { label: 'Productos', href: '/productos/' },
+    { label: 'Assistant', href: '/assistant/' },
     { label: 'Proyectos', href: '/proyectos/' },
     { label: 'Nosotros', href: '/nosotros/' },
     { label: 'Contacto', href: '/contacto/' },

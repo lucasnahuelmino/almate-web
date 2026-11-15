@@ -8,6 +8,7 @@ const pageEntries = [
   'soluciones/index.html',
   'productos/index.html',
   'productos/nexo/index.html',
+  'assistant/index.html',
   'proyectos/index.html',
   'nosotros/index.html',
   'contacto/index.html',

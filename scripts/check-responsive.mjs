@@ -35,6 +35,7 @@ const routes = [
   { path: '/soluciones/', name: 'soluciones' },
   { path: '/productos/', name: 'productos' },
   { path: '/productos/nexo/', name: 'nexo' },
+  { path: '/assistant/', name: 'assistant' },
   { path: '/proyectos/', name: 'proyectos' },
   { path: '/nosotros/', name: 'nosotros' },
   { path: '/contacto/', name: 'contacto' },

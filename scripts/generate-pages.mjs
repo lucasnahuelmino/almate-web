@@ -9,6 +9,7 @@ import { HomePage } from '../src/pages/home.js';
 import { SolucionesPage } from '../src/pages/soluciones.js';
 import { ProductosPage } from '../src/pages/productos.js';
 import { NexoPage } from '../src/pages/nexo.js';
+import { AssistantPage } from '../src/pages/assistant.js';
 import { ProyectosPage } from '../src/pages/proyectos.js';
 import { NosotrosPage } from '../src/pages/nosotros.js';
 import { ContactoPage } from '../src/pages/contacto.js';
@@ -21,6 +22,7 @@ const pageDefinitions = [
   SolucionesPage(),
   ProductosPage(),
   NexoPage(),
+  AssistantPage(),
   ProyectosPage(),
   NosotrosPage(),
   ContactoPage(),
