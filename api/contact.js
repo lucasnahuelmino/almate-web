@@ -335,8 +335,61 @@ export default async function handler(req, res) {
   }
 
   if (!providerResponse.ok) {
-    /* No registramos el cuerpo del proveedor ni datos personales. */
-    console.error(`[contact] Resend respondió ${providerResponse.status}`);
+    /* Diagnóstico seguro: solo status, código/nombre y mensaje del proveedor,
+       truncado. No se registran claves, Authorization, datos personales ni el
+       cuerpo completo de la respuesta. */
+    let providerName = null;
+    let providerCode = null;
+    let providerStatusCode = null;
+    let providerMessage = null;
+    let hasProviderDetail = false;
+
+    try {
+      let rawBody = null;
+      if (typeof providerResponse.text === 'function') {
+        rawBody = await providerResponse.text();
+      } else if (typeof providerResponse.json === 'function') {
+        rawBody = JSON.stringify(await providerResponse.json());
+      }
+
+      if (rawBody) {
+        try {
+          const parsed = JSON.parse(rawBody);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            if (parsed.name != null) providerName = String(parsed.name);
+            if (parsed.code != null) providerCode = String(parsed.code);
+            if (parsed.statusCode != null) providerStatusCode = String(parsed.statusCode);
+            if (parsed.message != null) providerMessage = String(parsed.message);
+            hasProviderDetail =
+              providerName !== null ||
+              providerCode !== null ||
+              providerStatusCode !== null ||
+              providerMessage !== null;
+          }
+        } catch {
+          /* Cuerpo no JSON: no volcamos el contenido. */
+        }
+      }
+    } catch {
+      /* No se pudo leer el cuerpo: diagnóstico genérico. */
+    }
+
+    const errorLabel =
+      providerCode || providerName || providerStatusCode || 'unknown';
+    const truncatedMessage = providerMessage
+      ? providerMessage.slice(0, 500)
+      : '';
+
+    if (hasProviderDetail) {
+      console.error(
+        `[contact] Resend respondió ${providerResponse.status} · error=${errorLabel} · message="${truncatedMessage}"`,
+      );
+    } else {
+      console.error(
+        `[contact] Resend respondió ${providerResponse.status} · sin detalle del proveedor (cuerpo no JSON o campos ausentes)`,
+      );
+    }
+
     return json(res, 502, {
       ok: false,
       code: 'provider_error',
