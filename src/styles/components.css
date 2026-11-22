@@ -1784,6 +1784,33 @@
   --pv-muted: rgba(240, 243, 255, 0.4);
 }
 
+.theme-noir {
+  --pv-bg: #141312;
+  --pv-screen: #1f1d1a;
+  --pv-accent: #d4af6a;
+  --pv-accent-2: #f0d9a8;
+  --pv-ink: #f7f3ea;
+  --pv-muted: rgba(247, 243, 234, 0.42);
+}
+
+.theme-piola {
+  --pv-bg: #0f1f1e;
+  --pv-screen: #17302e;
+  --pv-accent: #2dd4bf;
+  --pv-accent-2: #ff9e5e;
+  --pv-ink: #eafff9;
+  --pv-muted: rgba(234, 255, 249, 0.42);
+}
+
+.theme-candy {
+  --pv-bg: #1c1426;
+  --pv-screen: #2a1f38;
+  --pv-accent: #ff8fc2;
+  --pv-accent-2: #ffd166;
+  --pv-ink: #fff4fb;
+  --pv-muted: rgba(255, 244, 251, 0.42);
+}
+
 /* ---------------------------------------------------------------
    Proceso
 --------------------------------------------------------------- */

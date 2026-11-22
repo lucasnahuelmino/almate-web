@@ -28,7 +28,7 @@ portfolio preparado para capturas.
 | Formulario + `api/contact.js` (Resend) | ✅ Implementado y probado con mocks |
 | Envío real de correo | ⚠️ Pendiente de claves y remitente |
 | Portfolio preparado para capturas | ✅ Estructura, placeholders e inventario en `docs/IMAGENES_PORTFOLIO.md` |
-| Capturas y demos reales | ⚠️ Pendientes |
+| Capturas reales por proyecto | ✅ Incorporadas cuando existen |
 | SEO técnico | ⚠️ Completo con URL relativa (falta dominio) |
 | Configuración Vercel | ✅ Documentada, sin desplegar |
 

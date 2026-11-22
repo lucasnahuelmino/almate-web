@@ -1,12 +1,7 @@
 /**
  * Portfolio administrado desde datos.
  * ---------------------------------------------------------------
- * Cada proyecto puede recibir una captura real en `cover` y una URL pública
- * en `demoUrl`. Mientras esos datos no existan, permanecen en null y la ficha
- * muestra un placeholder profesional. No se inventan capturas ni demos.
- *
- * Las capturas estándar viven en public/images/projects/ (WebP 1600×1000).
- * Ver docs/IMAGENES_PORTFOLIO.md para el inventario y el estado de cada una.
+
  */
 
 export const projectCategories = [
@@ -30,7 +25,7 @@ export const projects = [
     description:
       'Sitio para ferretería con categorías, fichas de producto, galería y un recorrido de consulta directo.',
     features: ['Catálogo por rubros', 'Ficha de producto', 'Galería', 'Consulta por WhatsApp'],
-    cover: null,
+    cover: '/images/projects/ferreteria-el-yunque.webp',
     coverAlt: 'Captura del sitio para Ferretería El Yunque',
     coverWidth: 1600,
     coverHeight: 1000,
@@ -54,7 +49,7 @@ export const projects = [
     description:
       'Sitio de restaurante con carta, reservas, historia del local y una estética cálida adaptada al rubro gastronómico.',
     features: ['Carta digital', 'Reservas', 'Galería', 'Contenido configurable'],
-    cover: null,
+    cover: '/images/projects/mesa-brava.webp',
     coverAlt: 'Captura del sitio para restaurante MESA BRAVA',
     coverWidth: 1600,
     coverHeight: 1000,
@@ -102,7 +97,7 @@ export const projects = [
     description:
       'Landing de arquitectura residencial e interiores con una dirección de arte editorial, foco en el portfolio y contacto directo.',
     features: ['Portfolio', 'Dirección de arte', 'Narrativa de proyecto', 'Contacto directo'],
-    cover: null,
+    cover: '/images/projects/estudio-umbral.webp',
     coverAlt: 'Captura del sitio para ESTUDIO UMBRAL',
     coverWidth: 1600,
     coverHeight: 1000,
@@ -174,7 +169,7 @@ export const projects = [
     description:
       'Sitio de inmobiliaria con catálogo de propiedades, filtros, panel privado y una base preparada para una operación real.',
     features: ['Búsqueda de propiedades', 'Fichas', 'Panel privado', 'API REST'],
-    cover: null,
+    cover: '/images/projects/almate-propiedades.webp',
     coverAlt: 'Captura de ALMATE Propiedades',
     coverWidth: 1600,
     coverHeight: 1000,
@@ -191,25 +186,97 @@ export const projects = [
   },
   {
     id: 'cuarto-menguante',
-    name: 'Cuarto Menguante',
+    name: 'CuartoMenguante',
     category: 'Estudio creativo',
     categoryId: 'creativo',
     type: 'Sitio oficial de banda',
     description:
       'Sitio para banda de rock con discografía, letras, videos, galería, fechas y una narrativa visual construida alrededor de su identidad.',
     features: ['Discografía', 'Letras', 'Galería', 'Agenda de shows'],
-    cover: null,
-    coverAlt: 'Captura del sitio de Cuarto Menguante',
+    cover: '/images/projects/cuarto-menguante.webp',
+    coverAlt: 'Captura del sitio de CuartoMenguante',
     coverWidth: 1600,
     coverHeight: 1000,
     coverFile: 'cuarto-menguante.webp',
-    demoUrl: null,
+    demoUrl: 'https://cuartomenguante.vercel.app/',
     cta: 'Consultar por este proyecto',
-    disclaimer: 'Proyecto desarrollado por ALMATE. La demo pública se habilita cuando exista una URL verificable.',
+
     visual: {
       theme: 'midnight',
       label: 'Música',
       code: 'WEB / 05',
+      domain: 'proyecto ALMATE',
+    },
+  },
+  {
+    id: 'tienda-ropa-elegante',
+    name: 'Tienda de ropa elegante',
+    category: 'Comercio',
+    categoryId: 'comercio',
+    type: 'Tienda de indumentaria elegante',
+    description:
+      'Sitio para tienda de indumentaria elegante con catálogo por prendas, fichas de producto, galería y consulta directa.',
+    features: ['Catálogo por prendas', 'Ficha de producto', 'Galería', 'Consulta por WhatsApp'],
+    cover: '/images/projects/tienda-ropa-elegante.webp',
+    coverAlt: 'Captura del sitio para la tienda de ropa elegante',
+    coverWidth: 1600,
+    coverHeight: 1000,
+    coverFile: 'tienda-ropa-elegante.webp',
+    demoUrl: null,
+    cta: 'Consultar por este proyecto',
+    disclaimer: 'Demostración de trabajo. No representa un cliente real.',
+    visual: {
+      theme: 'noir',
+      label: 'Indumentaria',
+      code: 'WEB / 06',
+      domain: 'proyecto ALMATE',
+    },
+  },
+  {
+    id: 'tienda-ropa-piola',
+    name: 'Tienda de ropa Piola',
+    category: 'Comercio',
+    categoryId: 'comercio',
+    type: 'Tienda de indumentaria urbana',
+    description:
+      'Sitio para tienda de ropa urbana con catálogo por prendas, fichas de producto, galería y un recorrido de consulta directo.',
+    features: ['Catálogo por prendas', 'Ficha de producto', 'Galería', 'Consulta por WhatsApp'],
+    cover: '/images/projects/tienda-ropa-piola.webp',
+    coverAlt: 'Captura del sitio para la tienda de ropa Piola',
+    coverWidth: 1600,
+    coverHeight: 1000,
+    coverFile: 'tienda-ropa-piola.webp',
+    demoUrl: null,
+    cta: 'Consultar por este proyecto',
+    disclaimer: 'Demostración de trabajo. No representa un cliente real.',
+    visual: {
+      theme: 'piola',
+      label: 'Indumentaria',
+      code: 'WEB / 07',
+      domain: 'proyecto ALMATE',
+    },
+  },
+  {
+    id: 'tienda-ropa-chicos',
+    name: 'Tienda de ropa para chicos',
+    category: 'Comercio',
+    categoryId: 'comercio',
+    type: 'Tienda de indumentaria infantil',
+    description:
+      'Sitio para tienda de indumentaria infantil con catálogo por prendas, fichas de producto, galería y consulta directa.',
+    features: ['Catálogo por prendas', 'Ficha de producto', 'Galería', 'Consulta por WhatsApp'],
+    cover: '/images/projects/tienda-ropa-chicos.webp',
+    coverAlt: 'Captura del sitio para la tienda de ropa para chicos',
+    coverWidth: 1600,
+    coverHeight: 1000,
+    coverFile: 'tienda-ropa-chicos.webp',
+    demoUrl: null,
+    cta: 'Consultar por este proyecto',
+    disclaimer: 'Demostración de trabajo. No representa un cliente real.',
+    visual: {
+      theme: 'candy',
+      label: 'Indumentaria infantil',
+      code: 'WEB / 08',
       domain: 'proyecto ALMATE',
     },
   },

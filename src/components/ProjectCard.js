@@ -53,7 +53,7 @@ export function ProjectCard({ project }) {
         ${
           hasDemo
             ? `<a class="btn btn--secondary btn--small" href="${escapeAttr(project.demoUrl)}" target="_blank" rel="noopener noreferrer"><span class="btn__label">Ver demostración</span><span class="btn__icon" aria-hidden="true">${icon('external')}</span></a>`
-            : `<span class="project-card__demo-note">${icon('info')}<span>Demo pública no publicada todavía</span></span>`
+            : `<span class="project-card__demo-note">${icon('info')}<span>Demo no disponible</span></span>`
         }
         <a class="text-link" href="${contactHref}"><span>${escapeHtml(project.cta || 'Consultar por este proyecto')}</span>${icon('arrow-up-right')}</a>
       </div>

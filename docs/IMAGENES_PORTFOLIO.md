@@ -4,7 +4,7 @@ Las capturas del portfolio **no están publicadas todavía**. Este documento
 define el estándar, el inventario y los nombres de archivo para incorporarlas
 sin inventar material ni romper las fichas de `src/data/projects.js`.
 
-Estado verificado: los 8 proyectos siguen con `cover: null` y `demoUrl: null`.
+Estado verificado: los 11 proyectos siguen con `cover: null` y `demoUrl: null`.
 No existe ninguna captura real ni URL pública verificable para ellos. Por eso
 `ProjectCard` muestra un placeholder conceptual discreto.
 
@@ -43,6 +43,9 @@ proyectos. La columna «Nombre en el sitio» es la que aparece en la web.
 | 6 | — | ALMATE Nexo Stock | `almate-nexo-stock.webp` | Sistemas de gestión | `/proyectos/` | Panel de stock y ventas | ⏳ Pendiente |
 | 7 | ALMATE Inmobiliaria | ALMATE Propiedades | `almate-propiedades.webp` | Inmobiliaria | `/proyectos/` | Catálogo con filtros | ⏳ Pendiente |
 | 8 | CuartoMenguante | Cuarto Menguante | `cuarto-menguante.webp` | Estudio creativo | `/proyectos/` | Discografía y fechas | ⏳ Pendiente |
+| 9 | — | Tienda de ropa elegante | `tienda-ropa-elegante.webp` | Comercio | `/proyectos/` | Catálogo por prendas y ficha de producto | ⏳ Pendiente |
+| 10 | — | Tienda de ropa Piola | `tienda-ropa-piola.webp` | Comercio | `/proyectos/` | Catálogo por prendas y ficha de producto | ⏳ Pendiente |
+| 11 | — | Tienda de ropa para chicos | `tienda-ropa-chicos.webp` | Comercio | `/proyectos/` | Catálogo por prendas y ficha de producto | ⏳ Pendiente |
 
 Los proyectos marcados como destacados aparecen también en la portada, por lo
 que su captura tiene prioridad (1, 2 y 5).
