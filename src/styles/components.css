@@ -1462,6 +1462,35 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform var(--transition), filter var(--transition);
+}
+
+.project-card:hover .project-card__media img {
+  transform: scale(1.08);
+  filter: brightness(1.12) saturate(1.08);
+}
+
+.project-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(8, 120, 232, 0.16) 100%);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.project-card:hover .project-card__media::after {
+  opacity: 1;
+}
+
+.project-card:hover .project-visual {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.project-visual {
+  transition: transform var(--transition), filter var(--transition);
 }
 
 .project-card__body {
